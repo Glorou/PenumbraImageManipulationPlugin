@@ -27,7 +27,7 @@ public class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
-    private ModSelector ModSelector { get; init; }
+    private ItemPicker ItemPicker { get; init; }
 
     
 
@@ -41,10 +41,10 @@ public class Plugin : IDalamudPlugin
         
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
-        ModSelector = new ModSelector(this);
+        ItemPicker = new ItemPicker(this);
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
-        WindowSystem.AddWindow(ModSelector);
+        WindowSystem.AddWindow(ItemPicker);
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -93,5 +93,5 @@ public class Plugin : IDalamudPlugin
 
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
-    public void ToggleModUI() => ModSelector.Toggle();
+    public void ToggleModUI() => ItemPicker.Toggle();
 }
