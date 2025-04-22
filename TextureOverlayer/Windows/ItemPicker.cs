@@ -16,7 +16,7 @@ using Texture = TextureOverlayer.Textures.Texture;
 
 namespace TextureOverlayer.Windows;
 
-public class ModSelector : Window, IDisposable
+public class ItemPicker : Window, IDisposable
 {
 
 
@@ -29,7 +29,7 @@ public class ModSelector : Window, IDisposable
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
-    public ModSelector(Plugin plugin)
+    public ItemPicker(Plugin plugin)
         : base("Select a Texture##ModSelector")
     {
         SizeConstraints = new WindowSizeConstraints
