@@ -2,7 +2,7 @@
 using Dalamud.Plugin;
 using System;
 
-namespace SamplePlugin;
+namespace TextureOverlayer;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
@@ -11,10 +11,11 @@ public class Configuration : IPluginConfiguration
 
     public bool IsConfigWindowMovable { get; set; } = true;
     public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
+    public string ModRootDirectory = "D:\\Games\\FFXIV\\Penumbra";
 
     // the below exist just to make saving less cumbersome
     public void Save()
     {
-        Plugin.PluginInterface.SavePluginConfig(this);
+        Service.PluginInterface.SavePluginConfig(this);
     }
 }
