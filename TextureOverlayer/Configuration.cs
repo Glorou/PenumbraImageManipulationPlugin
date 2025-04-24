@@ -11,7 +11,8 @@ public class Configuration : IPluginConfiguration
 
     public bool IsConfigWindowMovable { get; set; } = true;
     public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
-    public string ModRootDirectory = "D:\\Games\\FFXIV\\Penumbra";
+    public string ModRootDirectory { get; set; } = string.Empty;
+    public string PluginFolder { get; set; } = string.Empty;
 
     // the below exist just to make saving less cumbersome
     public void Save()

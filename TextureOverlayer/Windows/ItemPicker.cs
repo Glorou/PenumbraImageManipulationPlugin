@@ -18,13 +18,13 @@ namespace TextureOverlayer.Windows;
 
 public class ItemPicker : Window, IDisposable
 {
-
+    
 
     private Plugin Plugin;
     //private readonly TextureManager _textures = Service.TextureManager;
     //private readonly Texture preview = new();
-    
-    public nint tex = 0;
+    public string filePreview = string.Empty;
+    public nint tex = nint.Zero;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -46,6 +46,7 @@ public class ItemPicker : Window, IDisposable
 
     public override void Draw()
     {
+        
         // Do not use .Text() or any other formatted function like TextWrapped(), or SetTooltip().
         // These expect formatting parameter if any part of the text contains a "%", which we can't
         // provide through our bindings, leading to a Crash to Desktop.
@@ -58,6 +59,7 @@ public class ItemPicker : Window, IDisposable
         // ImRaii takes care of this after the scope ends.
         // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
         
+
         using (var child = ImRaii.Child("SomeChildWithAScrollbar", new Vector2((ImGui.GetContentRegionAvail().X * 0.70f), ImGui.GetContentRegionAvail().Y), false))
         {
 
@@ -68,30 +70,36 @@ public class ItemPicker : Window, IDisposable
 
                     foreach (var mod in Service.penumbraApi.Modlist.Values)
                     {
-                        ImGui.PushID(mod);
-                        if (ImGui.TreeNodeEx($"{mod}"))
-                        {
-                            var fileArray = Service.penumbraApi.GetTextureList(Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key);
-                            foreach (var file in fileArray)
+ 
+                            ImGui.PushID(mod);
+                            if (ImGui.TreeNodeEx($"{mod}"))
                             {
-                                ImGui.TextUnformatted($"{file.Remove(0, ("D:\\Games\\FFXIV\\Penumbra").Length + Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key.Length)}\n");
-                                if (ImGui.Button("Select"))
+                                var fileArray = Service.penumbraApi.GetTextureList(
+                                    Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key);
+                                foreach (var file in fileArray)
                                 {
-                                    
+                                    ImGui.TextUnformatted(
+                                        $"{file.Remove(0, ("D:\\Games\\FFXIV\\Penumbra").Length + Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key.Length) + 2}\n");
+                                    if (ImGui.Button($"Select##{file}"))
+                                    {
+                                        filePreview = file;
 
-                                    tex = TextureHandler.GetImGuiHandle(file);
+
+                                    }
                                 }
-                            }
 
-                            if (fileArray.Count == 0)
-                            {
-                                ImGui.TextUnformatted($"No textures found for {mod}");
-                            }
+
+                                if (fileArray.Count == 0)
+                                {
+                                    ImGui.TextUnformatted($"No textures found for {mod}");
+                                }
+
+
+                                
                             
-
-                            ImGui.TreePop();
-                        }
-                        ImGui.PopID();
+                                ImGui.TreePop();
+                            }
+                            ImGui.PopID();
                         
                     }
                     ImGui.TreePop();
@@ -106,10 +114,14 @@ public class ItemPicker : Window, IDisposable
         using (var previewer =ImRaii.Child("previewer"))
         {
             
-            if (tex != 0)
+            if (filePreview != null)
             {
+                ImGui.Image(TextureHandler.GetImGuiHandle(filePreview), new Vector2((ImGui.GetContentRegionAvail().X ), (ImGui.GetContentRegionAvail().X )));
+                if (ImGui.Button($"Confirm Texture##{filePreview}"))
+                {
+                    
+                }
                 
-                ImGui.Image(tex, new Vector2((ImGui.GetContentRegionAvail().X * 0.28f), (ImGui.GetContentRegionAvail().X * 0.28f)));
             }
 
         }

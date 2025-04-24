@@ -10,7 +10,9 @@ using Penumbra.Api.Api;
 using Penumbra.Api.IpcSubscribers;
 using TextureOverlayer.Interop;
 using TextureOverlayer.Textures;
+using TextureOverlayer.Utils;
 using TextureOverlayer.Windows;
+
 
 
 namespace TextureOverlayer;
@@ -23,13 +25,14 @@ public class Plugin : IDalamudPlugin
 
     public Configuration Configuration { get; init; }
 
+
     public readonly WindowSystem WindowSystem = new("TextureOverlayer");
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
     private ItemPicker ItemPicker { get; init; }
 
-    
+
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -38,6 +41,7 @@ public class Plugin : IDalamudPlugin
         Service.penumbraApi = new PenumbraIpc(pluginInterface);
         // you might normally want to embed resources and load them from the manifest stream
         Service.penumbraApi.Modlist = new GetModList(pluginInterface).Invoke();
+        Service.DataService = new DataService();
         
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
@@ -45,6 +49,9 @@ public class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ItemPicker);
+
+        Configuration.ModRootDirectory = Service.penumbraApi.GetModDirectory();
+        Configuration.PluginFolder = Service.penumbraApi.setupFolderStructure();
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -68,7 +75,7 @@ public class Plugin : IDalamudPlugin
         Service.Log.Information($"===A cool log message from {pluginInterface.Manifest.Name}===");
         
         
-
+    
 
 
     }

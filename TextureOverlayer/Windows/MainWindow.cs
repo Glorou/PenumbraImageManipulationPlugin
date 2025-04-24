@@ -5,6 +5,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
+using TextureOverlayer.Utils;
 
 namespace TextureOverlayer.Windows;
 
@@ -13,11 +14,12 @@ public class MainWindow : Window, IDisposable
 
     private Plugin Plugin;
 
+    private ImageCombination selectedCombination = null;
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
     public MainWindow(Plugin plugin)
-        : base("My Amazing Window##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("GIMP but better##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -37,15 +39,38 @@ public class MainWindow : Window, IDisposable
         // These expect formatting parameter if any part of the text contains a "%", which we can't
         // provide through our bindings, leading to a Crash to Desktop.
         // Replacements can be found in the ImGuiHelpers Class
-        ImGui.TextUnformatted($"The random config bool is {Plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
 
-        if (ImGui.Button("Select A mod"))
+        /*if (ImGui.Button("Select A mod"))
         {
             Plugin.ToggleModUI();
+        }*/
+        if (ImGui.Button("Create new Combined Texture"))
+        {
+            ImGui.OpenPopup("New Combined Texture##Window");
+            
         }
 
+        if (ImGui.BeginPopup("New Combined Texture##Window"))
+        {
+            var name = string.Empty;
+            ImGui.TextUnformatted("Texture nickname:");
+            ImGui.InputText("Nickname", ref name, 255);
+            if (ImGui.Button("Confirm") && name != string.Empty)
+            {
+                Service.DataService.AddImageCombination(name);
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.EndPopup();
+        }
+
+        if (ImGui.Button("OpenModUI"))
+        {
+            Plugin.ToggleModUI();
+            
+        }
         ImGui.Spacing();
 
+        ImGui.TextUnformatted($"Combined Textures:");
         // Normally a BeginChild() would have to be followed by an unconditional EndChild(),
         // ImRaii takes care of this after the scope ends.
         // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
@@ -54,41 +79,33 @@ public class MainWindow : Window, IDisposable
             // Check if this child is drawing
             if (child.Success)
             {
-                
 
-                ImGuiHelpers.ScaledDummy(20.0f);
-
-                // Example for other services that Dalamud provides.
-                // ClientState provides a wrapper filled with information about the local player object and client.
-
-                var localPlayer = Service.ClientState.LocalPlayer;
-                if (localPlayer == null)
+                foreach (var combo in Service.DataService.GetImageList())
                 {
-                    ImGui.TextUnformatted("Our local player is currently not loaded.");
-                    return;
-                }
 
-                if (!localPlayer.ClassJob.IsValid)
-                {
-                    ImGui.TextUnformatted("Our current job is currently not valid.");
-                    return;
-                }
-
-                // ExtractText() should be the preferred method to read Lumina SeStrings,
-                // as ToString does not provide the actual text values, instead gives an encoded macro string.
-                ImGui.TextUnformatted($"Our current job is ({localPlayer.ClassJob.RowId}) \"{localPlayer.ClassJob.Value.Abbreviation.ExtractText()}\"");
-
-                // Example for quarrying Lumina directly, getting the name of our current area.
-                var territoryId = Service.ClientState.TerritoryType;
-                if (Service.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(territoryId, out var territoryRow))
-                {
-                    ImGui.TextUnformatted($"We are currently in ({territoryId}) \"{territoryRow.PlaceName.Value.Name.ExtractText()}\"");
-                }
-                else
-                {
-                    ImGui.TextUnformatted("Invalid territory.");
+                        if(ImGui.Button(combo.Name))
+                        {
+                            
+                        }
                 }
             }
         }
+        ImGui.SameLine();
+        using (var previewer =ImRaii.Child("previewer"))
+        {
+            
+            if (selectedCombination != null)
+            {
+                if
+                //ImGui.Image(TextureHandler.GetImGuiHandle(filePreview), new Vector2((ImGui.GetContentRegionAvail().X ), (ImGui.GetContentRegionAvail().X )));
+                //if (ImGui.Button($"Confirm Texture##{filePreview}"))
+                {
+                    
+                }
+                
+            }
+
+        }
     }
 }
+    
