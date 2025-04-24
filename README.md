@@ -3,11 +3,17 @@
 # Texture Overlayer
 
 
+
 This plugin is designed to essentially replace baking texture mods in either Penumbra or GIMP
 
 You'll use a Penumbra Texture Editor-esque UI to define texture layers which get combined to make your final product.
 Layers are enabled and disabled based upon the current mod status and setting.
 You can configure multiple textures to replace, the primary use-case being skin textures but can be used for clothing textures as well.
+
+This project wouldn't be possible without the contributions of these projects, they have my greatest thanks.
+
+![GitHub Release](https://img.shields.io/github/v/release/xivdev/Penumbra?style=plastic&label=Penumbra) ![GitHub Release](https://img.shields.io/github/v/release/0ceal0t/Dalamud-VFXEditor?style=plastic&label=VfxEdit)
+
 
 
 ## To do
@@ -23,6 +29,7 @@ You can configure multiple textures to replace, the primary use-case being skin 
 * Texture selection window cleanup
   * Implement the VFXEditor selection method of selecting mods so I can show users what settings are associated with a texture
 * Setup the temporary mod framework
+
 
 
 ## Insanely rough mockups
