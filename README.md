@@ -25,6 +25,6 @@ You can configure multiple textures to replace, the primary use-case being skin 
 * Setup the temporary mod framework
 
 
-##Insanely rough mockups
+## Insanely rough mockups
 ![iCxm11sq49](https://github.com/user-attachments/assets/d8c0e1d2-48cd-4c81-a46c-b4cb7d571906)
 ![ffxiv_dx11_qNAMqKStYu](https://github.com/user-attachments/assets/d4278bfc-6e63-49bf-bc11-71b26dfd25fd)
