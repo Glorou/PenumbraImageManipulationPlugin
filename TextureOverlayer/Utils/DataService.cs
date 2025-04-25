@@ -13,6 +13,8 @@ public class DataService
 {
     private List<ImageCombination> _allCombinations = new List<ImageCombination>();
 
+    public List<ImageCombination> AllCombinations => _allCombinations;
+    private string selectedCombination= string.Empty;
     public bool AddImageCombination(string displayName )
     {
         try
@@ -46,7 +48,19 @@ public class DataService
         
     }
 
-            public  void LoadSelection( String item, out SelectedPenumbraMod loaded ) {
+
+    public void SetSelectedCombo(string name)
+    {
+        selectedCombination = name;
+    }
+
+    public String GetSelectedCombo() => selectedCombination;
+
+    public void ClearSelectedCombo() => selectedCombination = String.Empty;
+
+    //TODO: Refactor for use here - only single mod at a time, dont bother caching for now
+            //TODO: We only really need the file name, the mod its from (lazily match to accomodate helio fucked up names) and the settings associated
+           /* public  void LoadSelection( String item, out SelectedPenumbraMod loaded ) {
             loaded = new();
             var files = new Dictionary<string, List<(string, string)>>();
 
@@ -101,7 +115,7 @@ public class DataService
         }
     
     public List<ImageCombination> GetImageList()
-        => _allCombinations;
+        => _allCombinations;*/
 
 
 }

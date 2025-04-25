@@ -3,6 +3,8 @@ using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
+using System.Reflection;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using OtterGui.Log;
@@ -31,6 +33,7 @@ public class Plugin : IDalamudPlugin
     private MainWindow MainWindow { get; init; }
 
     private ItemPicker ItemPicker { get; init; }
+    
 
 
 
