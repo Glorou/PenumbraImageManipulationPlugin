@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility;
@@ -24,6 +25,7 @@ public class ItemPicker : Window, IDisposable
     //private readonly TextureManager _textures = Service.TextureManager;
     //private readonly Texture preview = new();
     public string filePreview = string.Empty;
+    public string parentMod = string.Empty;
     public nint tex = nint.Zero;
 
     // We give this window a hidden ID using ##
@@ -37,7 +39,7 @@ public class ItemPicker : Window, IDisposable
             MinimumSize = new Vector2(375, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
-
+    
 
         Plugin = plugin;
     }
@@ -83,7 +85,7 @@ public class ItemPicker : Window, IDisposable
                                     if (ImGui.Button($"Select##{file}"))
                                     {
                                         filePreview = file;
-
+                                        parentMod = mod;
 
                                     }
                                 }
@@ -119,7 +121,7 @@ public class ItemPicker : Window, IDisposable
                 ImGui.Image(TextureHandler.GetImGuiHandle(filePreview), new Vector2((ImGui.GetContentRegionAvail().X ), (ImGui.GetContentRegionAvail().X )));
                 if (ImGui.Button($"Confirm Texture##{filePreview}"))
                 {
-                    
+                    Service.DataService.GetImageCombination(Service.DataService.GetSelectedCombo()).addLayer(new ImageLayer(parentMod, filePreview, new List<string>()));
                 }
                 
             }
