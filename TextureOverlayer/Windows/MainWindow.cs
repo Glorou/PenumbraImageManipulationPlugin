@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using Dalamud.Interface.Utility;
@@ -59,7 +60,7 @@ public class MainWindow : Window, IDisposable
             if (popup)
             {
                 ImGui.TextUnformatted("Texture nickname:");
-                ImGui.InputText("Nickname", ref name, 255);
+                ImGui.InputText("", ref name, 255);
                 if (ImGui.Button("Confirm"))
                 {
                     if (!name.IsNullOrWhitespace())
@@ -118,7 +119,7 @@ public class MainWindow : Window, IDisposable
             }else if(selectedLayer != null && selectedLayer.FilePath != string.Empty)
             {
                 ImGui.Image(TextureHandler.GetImGuiHandle(selectedLayer),
-                            new Vector2((ImGui.GetContentRegionAvail().X), (ImGui.GetContentRegionAvail().X)));
+                            new Vector2((ImGui.GetContentRegionAvail().X * .5f), (ImGui.GetContentRegionAvail().X * .5f)));
                 
             }
             else
@@ -131,7 +132,7 @@ public class MainWindow : Window, IDisposable
             {
                 ImGui.SameLine();
                 using(var child = ImRaii.Child("imagestack",
-                                                new Vector2(ImGui.GetContentRegionAvail().X * 0.50f,
+                                                new Vector2(ImGui.GetContentRegionAvail().X,
                                                             ImGui.GetContentRegionAvail().Y * 0.50f), true))
                 {
                     // Check if this child is drawing
@@ -139,7 +140,7 @@ public class MainWindow : Window, IDisposable
                     {
                         foreach (var image in selectedCombination.Layers)
                         {
-                            if (ImGui.Selectable($"{image.Key}"))
+                            if (ImGui.Selectable($"{image.Value.FilePath.Split('\\').Last()} in {image.Value.ModName()}"))
                             {
                                 selectedLayer = image.Value;
                             }
