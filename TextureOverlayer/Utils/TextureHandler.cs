@@ -58,6 +58,7 @@ public class ImageLayer
     private string modName { get; set; } = string.Empty;
     String filePath { get; set; }= string.Empty;  //for now we're only going to support Overlay, and if it's not the same size as the base layer, we're going to resize it to that
     private List<String> associtatedSettings { get; set; } = new List<string>();
+    public String ModName()=> modName;
     public ImageLayer(String modName, String filePath, List<String> associtatedSettings)
     {
         this.modName = modName;
