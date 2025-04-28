@@ -4,6 +4,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
 using System.Reflection;
+using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
@@ -52,6 +53,7 @@ public class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ItemPicker);
+
 
         Configuration.ModRootDirectory = Service.penumbraApi.GetModDirectory();
         Configuration.PluginFolder = Service.penumbraApi.setupFolderStructure();

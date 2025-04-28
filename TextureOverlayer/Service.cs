@@ -1,3 +1,4 @@
+using Dalamud.Interface.ImGuiFileDialog;
 using TextureOverlayer.Interop;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -31,7 +32,7 @@ namespace TextureOverlayer
         internal static Plugin Plugin { get; set; } = null!;
         public static PenumbraIpc penumbraApi { get; set; } = null!;
         public static Textures.TextureManager TextureManager { get; set; } = null!;
-        
+        public static FileDialogManager FileDialogManager { get; set; } = null!;
         public static Utils.DataService DataService { get; set; } = null!;
 
     }
