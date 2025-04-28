@@ -166,4 +166,9 @@ public partial class CombinedTexture : IDisposable
         SaveTask = Task.CompletedTask;
         _mode    = Mode.Empty;
     }
+
+    public Texture GetCenter()
+    {
+        return _centerStorage;
+    }
 }

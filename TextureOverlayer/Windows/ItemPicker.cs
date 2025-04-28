@@ -121,7 +121,12 @@ public class ItemPicker : Window, IDisposable
                 ImGui.Image(TextureHandler.GetImGuiHandle(filePreview), new Vector2((ImGui.GetContentRegionAvail().X ), (ImGui.GetContentRegionAvail().X )));
                 if (ImGui.Button($"Confirm Texture##{filePreview}"))
                 {
-                    Service.DataService.GetImageCombination(Service.DataService.GetSelectedCombo()).addLayer(new ImageLayer(parentMod, filePreview, new List<string>()));
+                    if (Service.DataService.GetImageCombination(Service.DataService.GetSelectedCombo())
+                               .getLayerOrEmpty(filePreview) == null)
+                    {
+                        Service.DataService.GetImageCombination(Service.DataService.GetSelectedCombo()).addLayer(new ImageLayer(parentMod, filePreview, new List<string>()));
+                    }
+                    
                 }
                 
             }

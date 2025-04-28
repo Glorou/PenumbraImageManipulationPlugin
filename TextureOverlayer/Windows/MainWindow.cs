@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -32,6 +33,8 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
+        
+        Service.FileDialogManager = new FileDialogManager();
 
         Plugin = plugin;
     }
@@ -47,14 +50,45 @@ public class MainWindow : Window, IDisposable
 
 
         
-        
-        //TODO: Fix this popup
+        Service.FileDialogManager.Draw();
+
+
+
+
+        ImGui.BeginGroup();
+        if (ImGui.Button("OpenUI"))
+        {
+            Plugin.ToggleModUI();
+
+        }
+
+        ImGui.Spacing();
+
+        ImGui.TextUnformatted($"Combined Textures:");
+        // Normally a BeginChild() would have to be followed by an unconditional EndChild(),
+        // ImRaii takes care of this after the scope ends.
+        // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
+        using (var child = ImRaii.Child("ComboPicker", new Vector2(ImGui.GetContentRegionAvail().X * 0.20f, ImGui.GetContentRegionAvail().Y * 0.80f), true))
+        {
+            // Check if this child is drawing
+            if (child.Success)
+            {
+
+                foreach (var combo in Service.DataService.AllCombinations)
+                {
+
+                    if (ImGui.Selectable(combo.Name))
+                    {
+                        selectedCombination = combo;
+                    }
+                }
+            }
+        }
         if (ImGui.Button("Create new Combined Texture"))
         {
             ImGui.OpenPopup("New Combined Texture##Window");
 
         }
-
         using(var popup = ImRaii.Popup("New Combined Texture##Window"))
         {
             if (popup)
@@ -73,36 +107,8 @@ public class MainWindow : Window, IDisposable
             }
 
         }
-
+        ImGui.EndGroup();
         
-        if (ImGui.Button("OpenUI"))
-        {
-            Plugin.ToggleModUI();
-
-        }
-
-        ImGui.Spacing();
-
-        ImGui.TextUnformatted($"Combined Textures:");
-        // Normally a BeginChild() would have to be followed by an unconditional EndChild(),
-        // ImRaii takes care of this after the scope ends.
-        // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
-        using (var child = ImRaii.Child("ComboPicker", new Vector2(ImGui.GetContentRegionAvail().X * 0.40f, ImGui.GetContentRegionAvail().Y * 0.80f), true))
-        {
-            // Check if this child is drawing
-            if (child.Success)
-            {
-
-                foreach (var combo in Service.DataService.AllCombinations)
-                {
-
-                    if (ImGui.Button(combo.Name))
-                    {
-                        selectedCombination = combo;
-                    }
-                }
-            }
-        }
 
         ImGui.SameLine();
         using (var previewer = ImRaii.Child("previewer"))
@@ -116,21 +122,23 @@ public class MainWindow : Window, IDisposable
                 if (ImGui.Button($"Confirm Texture##{selectedCombination.Name}")){}
 
 
-            }else if(selectedLayer != null && selectedLayer.FilePath != string.Empty)
+            }/*else if(selectedLayer != null && selectedLayer.FilePath != string.Empty)
             {
                 ImGui.Image(TextureHandler.GetImGuiHandle(selectedLayer),
-                            new Vector2((ImGui.GetContentRegionAvail().X * .5f), (ImGui.GetContentRegionAvail().X * .5f)));
+                            new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
                 
-            }
+            }*/
             else
             {
                 ImGui.Image(Service.TextureProvider.GetFromManifestResource(Assembly.GetExecutingAssembly(), "TextureOverlayer.Placeholder.png").GetWrapOrEmpty().ImGuiHandle,
-                            new Vector2((ImGui.GetContentRegionAvail().X * .5f), (ImGui.GetContentRegionAvail().X * .5f)));
+                            new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
             }
 
+            ImGui.SameLine();
+            ImGui.BeginGroup();
             if (selectedCombination != null)
             {
-                ImGui.SameLine();
+                
                 using(var child = ImRaii.Child("imagestack",
                                                 new Vector2(ImGui.GetContentRegionAvail().X,
                                                             ImGui.GetContentRegionAvail().Y * 0.50f), true))
@@ -140,7 +148,7 @@ public class MainWindow : Window, IDisposable
                     {
                         foreach (var image in selectedCombination.Layers)
                         {
-                            if (ImGui.Selectable($"{image.Value.FilePath.Split('\\').Last()} in {image.Value.ModName()}"))
+                            if (ImGui.Selectable($"{image.Value.FilePath.Split('\\').Last()}"))
                             {
                                 selectedLayer = image.Value;
                             }
@@ -148,14 +156,36 @@ public class MainWindow : Window, IDisposable
                         
                     }
                 }
-                if(ImGui.Button("Add new Layer from Penumbra"))
+                ImGui.TextUnformatted("New Layer from:");
+
+                if(ImGui.Button("Penumbra mod"))
                 {
                     Service.DataService.SetSelectedCombo(selectedCombination.Name);
                     Plugin.ToggleModUI();
                 }
+                ImGui.SameLine();
+                if(ImGui.Button("File"))
+                {
+                    
+                    Service.FileDialogManager.OpenFileDialog("Select Image","Image Files {.png, .tga, .dds, .bmp, .tex}",
+                                                             (success, path) =>
+                                                             {
+                                                                 if (success)
+                                                                 {
+                                                                     selectedCombination.addLayer(new ImageLayer(path[0]));
+                                                                 }
+                                                                 
+                                                             }, 1, null );
+                }
+                
+                
             }
             
+            ImGui.EndGroup();
+            
         }
+        //TODO: Fix this popup
+        
 
     }
 }    
