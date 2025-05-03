@@ -1,6 +1,6 @@
 
 
-# Texture Overlayer
+# Penumbra Image Manipulation Plugin
 
 
 
