@@ -97,6 +97,7 @@ public class ImageCombination
 
     public void Compile()
     {
+        _sandwich.Clear();
         LoadState = 1;
         if (layers.Count == 1)
         {
