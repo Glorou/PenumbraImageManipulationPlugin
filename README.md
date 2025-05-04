@@ -33,5 +33,5 @@ This project wouldn't be possible without these projects, they have my greatest 
 
 
 ## Insanely rough mockups
-![ffxiv_dx11_FzrCMuT9Pc](https://github.com/user-attachments/assets/e7894280-8ba9-4251-b096-d13eeeb27cdd)
-![ffxiv_dx11_0igu2dP7Yw](https://github.com/user-attachments/assets/1083e658-fc07-4b44-8835-52c38f0c4b00)
+
+![ffxiv_dx11_RX8Y7fEiB4](https://github.com/user-attachments/assets/80264d50-8d90-4c03-9473-68ec4403d894)
