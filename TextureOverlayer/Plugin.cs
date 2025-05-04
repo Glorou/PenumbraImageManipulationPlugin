@@ -24,7 +24,7 @@ public class Plugin : IDalamudPlugin
 {
 
     
-    private const string CommandName = "/pmycommand";
+    private const string CommandName = "/pimp";
 
     public Configuration Configuration { get; init; }
 
