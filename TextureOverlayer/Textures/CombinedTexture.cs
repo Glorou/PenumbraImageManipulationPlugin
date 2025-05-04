@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
+using TextureOverlayer.Utils;
 
 namespace TextureOverlayer.Textures;
 
@@ -167,8 +168,14 @@ public partial class CombinedTexture : IDisposable
         _mode    = Mode.Empty;
     }
 
-    public Texture GetCenter()
+
+    public Texture GetCurrent()
     {
-        return _centerStorage;
+        return _current;
     }
+
+    public void setResizeOp()
+    {
+        _resizeOp = ResizeOp.ToLeft;
+    } 
 }

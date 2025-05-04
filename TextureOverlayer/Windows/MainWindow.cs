@@ -9,6 +9,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
+using TextureOverlayer.Textures;
 using TextureOverlayer.Utils;
 
 namespace TextureOverlayer.Windows;
@@ -20,12 +21,12 @@ public class MainWindow : Window, IDisposable
     private Plugin Plugin;
     private static string name = string.Empty;
     private ImageCombination selectedCombination = null;
-    private ImageLayer selectedLayer = null;
+    private static int selectedIndex = 0;
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
     public MainWindow(Plugin plugin)
-        : base("GIMP but better##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("Penumbra Image Manipulation Plugin##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -51,7 +52,7 @@ public class MainWindow : Window, IDisposable
 
         
         Service.FileDialogManager.Draw();
-
+    
 
 
 
@@ -97,7 +98,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.InputText("", ref name, 255);
                 if (ImGui.Button("Confirm"))
                 {
-                    if (!name.IsNullOrWhitespace())
+                    if (!name.IsNullOrWhitespace() && !Service.DataService.AllCombinations.Any(p => p.Name == name))
                     {
                         Service.DataService.AddImageCombination(name);
                         ImGui.CloseCurrentPopup();
@@ -111,15 +112,18 @@ public class MainWindow : Window, IDisposable
         
 
         ImGui.SameLine();
+        ImGui.BeginGroup();
         using (var previewer = ImRaii.Child("previewer"))
         {
 
-            if (selectedCombination != null && selectedCombination.FileName != string.Empty)
+            if (selectedCombination != null && selectedCombination.Layers.Count >= 1)
             {
-
-                ImGui.Image(TextureHandler.GetImGuiHandle(selectedCombination),
-                            new Vector2((ImGui.GetContentRegionAvail().X), (ImGui.GetContentRegionAvail().X)));
-                if (ImGui.Button($"Confirm Texture##{selectedCombination.Name}")){}
+                selectedCombination.LoadState = 2;
+                //TextureDrawer.Draw(selectedCombination.GetTexture(),new Vector2((ImGui.GetContentRegionAvail().X), (ImGui.GetContentRegionAvail().X)));
+                selectedCombination.CombinedTexture.Draw(Service.TextureManager,
+                                                         new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
+                                                          
+                //if (ImGui.Button($"Confirm Texture##{selectedCombination.Name}")){}
 
 
             }/*else if(selectedLayer != null && selectedLayer.FilePath != string.Empty)
@@ -134,9 +138,14 @@ public class MainWindow : Window, IDisposable
                             new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
             }
 
+            if (selectedCombination != null && selectedCombination.Layers.Count >= 2 && selectedCombination.LoadState == 0)
+            {
+                selectedCombination.Compile();
+            }
+            ImGui.EndGroup();
             ImGui.SameLine();
             ImGui.BeginGroup();
-            if (selectedCombination != null)
+            if (selectedCombination != null && selectedCombination.Layers.Count >= 0)
             {
                 
                 using(var child = ImRaii.Child("imagestack",
@@ -148,9 +157,9 @@ public class MainWindow : Window, IDisposable
                     {
                         foreach (var image in selectedCombination.Layers)
                         {
-                            if (ImGui.Selectable($"{image.Value.FilePath.Split('\\').Last()}"))
+                            if (ImGui.Selectable($"{image.GetTexture().Path.Split('\\').Last()}"))
                             {
-                                selectedLayer = image.Value;
+                                selectedIndex = selectedCombination.Layers.FindLastIndex(u => u.GetTexture().Path == image.GetTexture().Path);
                             }
                         }
                         
@@ -172,7 +181,8 @@ public class MainWindow : Window, IDisposable
                                                              {
                                                                  if (success)
                                                                  {
-                                                                     selectedCombination.addLayer(new ImageLayer(path[0]));
+                                                                     selectedCombination.AddLayer(path[0]);
+                                                                     selectedCombination.LoadState = 0;
                                                                  }
                                                                  
                                                              }, 1, null );
