@@ -113,6 +113,8 @@ public class MainWindow : Window, IDisposable
 
         ImGui.SameLine();
         ImGui.BeginGroup();
+        //TODO: Add show/hide layer & layer modifications
+        //TODO: Make a load wheel and figure out how to not lock up the game while the compile process runs
         using (var previewer = ImRaii.Child("previewer"))
         {
 
@@ -182,16 +184,14 @@ public class MainWindow : Window, IDisposable
                                                                  
                                                              }, 1, null );
                 }
-                
+                if (ImGui.Button("Save"))
+                {
+                    selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
+                    Service.DataService.WriteConfig(selectedCombination);
+                }
                 
             }
-            
-            ImGui.EndGroup();
-            
         }
-        //TODO: Fix this popup
-        
-
     }
 }    
 

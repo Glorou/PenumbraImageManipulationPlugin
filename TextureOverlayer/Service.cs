@@ -32,6 +32,7 @@ namespace TextureOverlayer
         internal static IPluginLog Log { get; private set; } = null!;
 
         internal static Plugin Plugin { get; set; } = null!;
+        public static Configuration Configuration { get; set; } = null!;
         public static PenumbraIpc penumbraApi { get; set; } = null!;
         public static Textures.TextureManager TextureManager { get; set; } = null!;
         public static FileDialogManager FileDialogManager { get; set; } = null!;

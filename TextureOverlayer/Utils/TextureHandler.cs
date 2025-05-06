@@ -48,24 +48,24 @@ public enum Channels : byte
     Alpha = 8,
 }
 
-
+//TODO: Dispose of Image combinations properly, setup redirect path and temp penum mod
 /// <summary> Class that encapsulates all data needed to create the combination</summary>
 /// <remarks></remarks>
 [Serializable]
 public class ImageCombination
 {
     public String Name {get; set;}
-    String gamepath = string.Empty;
+    String gamepath  = string.Empty;
     bool enabled  = false;
     String fileName = string.Empty;
     int position = -1;
-    [JsonIgnore]
-    CombinedTexture comboTex = new CombinedTexture(new Texture(), new Texture());
-    public int LoadState { get; set; } //0 == not loaded 1 == loading 2 == loaded
-    List<ImageLayer> layers = new List<ImageLayer>();
-    [JsonIgnore]
-    public List<CombinedTexture> _sandwich = new List<CombinedTexture>();
     private (int width, int height) res;
+    List<ImageLayer> layers = new List<ImageLayer>();
+    
+    [JsonIgnore]
+    private List<CombinedTexture> _sandwich = new List<CombinedTexture>();
+    private CombinedTexture comboTex = new CombinedTexture(new Texture(), new Texture());
+    public int LoadState { get; set; } //0 == not loaded 1 == loading 2 == loaded
 
 
     public ImageCombination(String displayName)
@@ -74,9 +74,18 @@ public class ImageCombination
     }
     public String GamePath => gamepath;
     public bool Enabled => enabled;
-    public String FileName => fileName;
-    
-    
+    public String FileName
+    {
+        get => fileName;
+        set => fileName = value;
+    }
+
+    public (int width, int height) Res
+    {
+        get => res;
+        set => res = value;
+    }
+
     public bool PathExists(string path)
     {
         foreach (var texture in layers)
@@ -158,18 +167,19 @@ public class ImageCombination
 public class ImageLayer
 {
 
+
+
+    public Matrix4x4 _multiplier  = Matrix4x4.Identity;
+    public Vector4   _constant    = Vector4.Zero;
+    public int       _offsetX;
+    public int       _offsetY;
+    public CombineOp _combineOp    = CombineOp.Over;
+    public ResizeOp  _resizeOp     = ResizeOp.None;
+    public Channels  _copyChannels = Channels.Red | Channels.Green | Channels.Blue | Channels.Alpha;
+    public String path = string.Empty;
+    
     [JsonIgnore]
     private Texture? _texture;
-
-    private Matrix4x4 _multiplier  = Matrix4x4.Identity;
-    private Vector4   _constant    = Vector4.Zero;
-    private int       _offsetX;
-    private int       _offsetY;
-    private CombineOp _combineOp    = CombineOp.Over;
-    private ResizeOp  _resizeOp     = ResizeOp.None;
-    public Channels  _copyChannels = Channels.Red | Channels.Green | Channels.Blue | Channels.Alpha;
-    private String path = string.Empty;
-    
     
     public ImageLayer(Texture texture, CombineOp combineOp, ResizeOp resizeOp)
     {

@@ -25,8 +25,7 @@ public class Plugin : IDalamudPlugin
 
     
     private const string CommandName = "/pimp";
-
-    public Configuration Configuration { get; init; }
+    
 
 
     public readonly WindowSystem WindowSystem = new("TextureOverlayer");
@@ -41,7 +40,7 @@ public class Plugin : IDalamudPlugin
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-        Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Service.Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Service.penumbraApi = new PenumbraIpc(pluginInterface);
         // you might normally want to embed resources and load them from the manifest stream
         Service.penumbraApi.Modlist = new GetModList(pluginInterface).Invoke();
@@ -55,8 +54,8 @@ public class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ItemPicker);
 
 
-        Configuration.ModRootDirectory = Service.penumbraApi.GetModDirectory();
-        Configuration.PluginFolder = Service.penumbraApi.setupFolderStructure();
+        Service.Configuration.ModRootDirectory = Service.penumbraApi.GetModDirectory();
+        Service.Configuration.PluginFolder = Service.penumbraApi.setupFolderStructure();
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
