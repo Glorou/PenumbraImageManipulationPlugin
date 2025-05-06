@@ -27,6 +27,8 @@ namespace TextureOverlayer
         internal static IDataManager DataManager { get; private set; } = null!;
 
         [PluginService]
+        internal static IFramework Framework { get; private set; } = null!;
+        [PluginService]
         internal static IPluginLog Log { get; private set; } = null!;
 
         internal static Plugin Plugin { get; set; } = null!;

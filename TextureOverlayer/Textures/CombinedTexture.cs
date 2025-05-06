@@ -174,8 +174,9 @@ public partial class CombinedTexture : IDisposable
         return _current;
     }
 
-    public void setResizeOp()
+    public void setOps()
     {
+        _combineOp = CombineOp.Over;
         _resizeOp = ResizeOp.ToLeft;
     } 
 }

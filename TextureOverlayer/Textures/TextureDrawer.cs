@@ -21,7 +21,7 @@ public static class TextureDrawer
             size = texture.TextureWrap.Size.Contain(size);
 
             ImGui.Image(texture.TextureWrap.ImGuiHandle, size);
-            DrawData(texture);
+            //DrawData(texture);
         }
         else if (texture.LoadError != null)
         {

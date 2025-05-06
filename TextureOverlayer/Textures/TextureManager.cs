@@ -162,6 +162,7 @@ public sealed class TextureManager(IDataManager gameData, Logger logger, ITextur
     }
 
     private class SaveAsAction : IAction
+    
     {
         private readonly TextureManager                  _textures;
         private readonly string                          _outputPath;
