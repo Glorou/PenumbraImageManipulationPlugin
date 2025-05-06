@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
+using Dalamud.Utility;
 using Newtonsoft.Json;
+using TextureOverlayer.Textures;
 
 namespace TextureOverlayer.Utils;
 
 
 
+//TODO: Save the configs 
+//TODO: Copy entire class when selected, so we dont have to compare to the file? maybe?
 public class DataService
 {
     private List<ImageCombination> _allCombinations = new List<ImageCombination>();
@@ -38,6 +42,12 @@ public class DataService
     {
         try
         {
+            var temp = _allCombinations.Find(x => x.Name == name);
+            temp.CombinedTexture.Dispose();
+            foreach(var layer in temp.Layers)
+            {
+                layer.GetTexture().Dispose();
+            }
             _allCombinations.RemoveAll(x => x.Name == name);
             return true;
         }catch (Exception e)
@@ -57,6 +67,35 @@ public class DataService
     public String GetSelectedCombo() => selectedCombination;
 
     public void ClearSelectedCombo() => selectedCombination = String.Empty;
+
+
+    public void WriteConfig(ImageCombination combination)
+    {
+        var json = JsonConvert.SerializeObject(combination, Formatting.Indented);
+        FilesystemUtil.WriteAllTextSafe(Service.Configuration.PluginFolder + $"\\{combination.Name}.json", json);
+        
+    }
+
+
+    
+    //TODO: Add support for BC compression
+    public string WriteTexFile(ImageCombination combination)
+    {
+        Service.TextureManager.SaveAs(CombinedTexture.TextureSaveType.AsIs, false, true,
+                                      combination.CombinedTexture.GetCurrent().BaseImage,
+                                      Service.Configuration.PluginFolder + $"\\{combination.Name}.tex",
+                                      combination.CombinedTexture.GetCurrent().RgbaPixels, combination.Res.width, combination.Res.height);
+        return combination.Name + ".tex";
+    }
+    public void WriteComboToFile(ImageCombination combination)
+    {
+        var list = JsonConvert.SerializeObject(combination.Layers);
+        Base58.ToString(list);
+        
+        JsonConvert.SerializeObject(combination);
+        
+        
+    }
 
     //TODO: Refactor for use here - only single mod at a time, dont bother caching for now
             //TODO: We only really need the file name, the mod its from (lazily match to accomodate helio fucked up names) and the settings associated

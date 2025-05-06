@@ -20,7 +20,7 @@ public class ConfigWindow : Window, IDisposable
         Size = new Vector2(232, 90);
         SizeCondition = ImGuiCond.Always;
 
-        Configuration = plugin.Configuration;
+        Configuration = Service.Configuration;
     }
 
     public void Dispose() { }
