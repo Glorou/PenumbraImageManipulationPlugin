@@ -116,9 +116,8 @@ public class MainWindow : Window, IDisposable
         using (var previewer = ImRaii.Child("previewer"))
         {
 
-            if (selectedCombination != null && selectedCombination.Layers.Count >= 1)
+            if (selectedCombination != null && selectedCombination.Layers.Count >= 1 && selectedCombination.LoadState == 2)
             {
-                selectedCombination.LoadState = 2;
                 //TextureDrawer.Draw(selectedCombination.GetTexture(),new Vector2((ImGui.GetContentRegionAvail().X), (ImGui.GetContentRegionAvail().X)));
                 selectedCombination.CombinedTexture.Draw(Service.TextureManager,
                                                          new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
@@ -137,11 +136,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.Image(Service.TextureProvider.GetFromManifestResource(Assembly.GetExecutingAssembly(), "TextureOverlayer.Placeholder.png").GetWrapOrEmpty().ImGuiHandle,
                             new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
             }
-
-            if (selectedCombination != null && selectedCombination.Layers.Count >= 2 && selectedCombination.LoadState == 0)
-            {
-                selectedCombination.Compile();
-            }
+            
             ImGui.EndGroup();
             ImGui.SameLine();
             ImGui.BeginGroup();

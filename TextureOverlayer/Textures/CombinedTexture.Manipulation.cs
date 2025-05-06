@@ -148,7 +148,7 @@ public partial class CombinedTexture
         }
     }
 
-        private (int Width, int Height) CombineImage()
+        public (int Width, int Height) CombineImage()
         {
             var combineOp = GetActualCombineOp();
             var resizeOp  = GetActualResizeOp(_resizeOp, combineOp);
