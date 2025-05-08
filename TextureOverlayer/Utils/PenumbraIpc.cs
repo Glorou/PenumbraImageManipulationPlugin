@@ -8,6 +8,8 @@ using Penumbra.Api.Enums;
 using Penumbra.Api.Helpers;
 using Penumbra.Api.IpcSubscribers;
 using TextureOverlayer;
+using TextureOverlayer.Textures;
+using TextureOverlayer.Utils;
 
 namespace TextureOverlayer.Interop
 {
@@ -19,7 +21,10 @@ namespace TextureOverlayer.Interop
 
         private Dictionary<string, string> modList = new();
         private readonly GetModDirectory _getModDirectory = new GetModDirectory(pluginInterface);
-
+        private readonly GetCollections _getCollections = new GetCollections(pluginInterface);
+        private readonly AddTemporaryMod _addTemporaryMod = new AddTemporaryMod(pluginInterface);
+        private readonly RemoveTemporaryMod _removeTemporaryMod = new RemoveTemporaryMod(pluginInterface);
+        private readonly RedrawAll _redrawAll = new RedrawAll(pluginInterface);
 
         private GetModPath _getModPath = new GetModPath(pluginInterface);
         public Dictionary<string, string> Modlist
@@ -29,11 +34,35 @@ namespace TextureOverlayer.Interop
             set => this.modList = new GetModList(pluginInterface).Invoke();
         }
 
+        public void RedrawAll()
+        {
+            _redrawAll.Invoke();
+        }
+
         public String GetModDirectory()
         {
             return _getModDirectory.Invoke();
         }
 
+        public Dictionary<Guid, string> GetCollections()
+        {
+            return _getCollections.Invoke();
+        }
+
+
+        public PenumbraApiEc AddTemporaryMod(ImageCombination texture)
+        {
+            var temp = _addTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, new Dictionary<string, string>{{texture.gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99);
+            _redrawAll.Invoke();
+            return temp;
+
+        }
+        public PenumbraApiEc RemoveTemporaryMod(ImageCombination texture)
+        {
+            var temp =  _removeTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, 99);
+            _redrawAll.Invoke();
+            return temp;
+        }
 
         /*
         private readonly EventSubscriber<string> modDeletedEventSubscriber = 
@@ -84,6 +113,7 @@ namespace TextureOverlayer.Interop
            return String.Empty;
        }
 
+       
        
         public void Dispose()
         {
