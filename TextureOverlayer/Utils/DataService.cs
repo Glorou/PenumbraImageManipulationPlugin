@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net.Mime;
 using Dalamud.Utility;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using OtterTex;
 using TextureOverlayer.Textures;
 
 namespace TextureOverlayer.Utils;
@@ -87,14 +89,25 @@ public class DataService
                                       combination.CombinedTexture.GetCurrent().RgbaPixels, combination.Res.width, combination.Res.height);
         return combination.Name + ".tex";
     }
-    public void WriteComboToFile(ImageCombination combination)
+
+    public ImageCombination ReadConfig(String path)
     {
-        var list = JsonConvert.SerializeObject(combination.Layers);
-        Base58.ToString(list);
+        try
+        {
+            using StreamReader reader = new(path);
+            string json = reader.ReadToEnd();
+            JObject imageCombName = JObject.Parse(json);
+            JToken comboName = imageCombName["Name"];
+            var tempCombo = new ImageCombination(comboName.ToString());
+            JsonConvert.PopulateObject(json,tempCombo);
+            return tempCombo;
+        }
+        catch (Exception e)
+        {
+
+        }
         
-        JsonConvert.SerializeObject(combination);
-        
-        
+        return null;
     }
 
     //TODO: Refactor for use here - only single mod at a time, dont bother caching for now

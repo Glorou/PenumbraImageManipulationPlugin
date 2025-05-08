@@ -84,10 +84,11 @@ public class ItemPicker : Window, IDisposable
                         foreach (var file in fileArray)
                         {
                             ImGui.TextUnformatted(
-                                $"{file.Remove(0, ("D:\\Games\\FFXIV\\Penumbra").Length + Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key.Length) + 2}\n");
+                                $"{file.Remove(0, ("D:\\Games\\FFXIV\\Penumbra").Length + Service.penumbraApi.Modlist.FirstOrDefault(x => x.Value == mod).Key.Length)}\n");
                             if (ImGui.Button($"Select##{file}"))
                             {
                                 previewPath = file;
+                                Service.TextureManager.LoadTex(file);
                             }
                         }
 
