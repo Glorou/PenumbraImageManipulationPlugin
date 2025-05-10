@@ -52,7 +52,7 @@ namespace TextureOverlayer.Interop
 
         public PenumbraApiEc AddTemporaryMod(ImageCombination texture)
         {
-            var temp = _addTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, new Dictionary<string, string>{{texture.gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99);
+            var temp = _addTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, new Dictionary<string, string>{{texture._gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99);
             _redrawAll.Invoke();
             return temp;
 
