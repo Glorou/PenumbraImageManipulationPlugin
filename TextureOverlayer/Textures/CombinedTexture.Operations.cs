@@ -16,6 +16,7 @@ public partial class CombinedTexture
         Under         = 1,
         RightMultiply = 2,
         CopyChannels  = 3,
+        SubtractChannels = 4,
     }
 
     private enum ResizeOp

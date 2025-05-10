@@ -169,14 +169,4 @@ public partial class CombinedTexture : IDisposable
     }
 
 
-    public Texture GetCurrent()
-    {
-        return _current;
-    }
-
-    public void setOps()
-    {
-        _combineOp = CombineOp.Over;
-        _resizeOp = ResizeOp.ToLeft;
-    } 
 }

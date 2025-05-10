@@ -31,7 +31,10 @@ public enum CombineOp
     Under         = 1,
     RightMultiply = 2,
     CopyChannels  = 3,
+    SubtractChannels = 4,
 }
+
+
 
 public enum ResizeOp
 {
@@ -51,7 +54,8 @@ public enum Channels : byte
     Alpha = 8,
 }
 
-//TODO: Dispose of Image combinations properly, setup redirect path and temp penum mod
+
+
 /// <summary> Class that encapsulates all data needed to create the combination</summary>
 /// <remarks></remarks>
 [Serializable]
@@ -159,7 +163,8 @@ public class ImageCombination
                         _sandwich[^1].GetCurrent().TextureWrap ??=
                             Service.TextureManager.LoadTextureWrap(_sandwich[^1].GetCurrent().RgbaPixels, res.width, res.height);
                         _sandwich.Add(new CombinedTexture(_sandwich[^1].GetCurrent(), layers[i].GetTexture()));
-                        await newStackOps(_sandwich[^1]);
+                        
+                        await newStackOps(_sandwich[^1], layers[i]);
                     }
 
                 }
@@ -175,10 +180,11 @@ public class ImageCombination
     [JsonIgnore]
     public CombinedTexture CombinedTexture => comboTex;
 
-    public async Task newStackOps(CombinedTexture tex)
+    public async Task newStackOps(CombinedTexture tex, ImageLayer layer)
     {
+        
         tex.Update();
-        tex.setOps();
+        tex.setOps(layer);
         var waiting = tex.CombineImage();
         return;
     }
@@ -233,7 +239,8 @@ public class ImageLayer
     }
     
     public Texture GetTexture() => _texture;
-    
+
+
     //TODO: make a file fetch function that will check that the file exists, if not requery to check if it still exists at all
 } 
 
@@ -241,11 +248,17 @@ public class ImageLayer
 
 public static class TextureHandler
 {
+    public static readonly IReadOnlyList<string> ResizeOpLabels = new string[]
+    {
+        "Over",
+        "Under",
+        "Right Multiply",
+        "Copy Channels",
+        "Subtract Channels",
+    };
 
    /* public static nint GetImGuiHandle(ImageCombination file)
         => GetImGuiHandle(file.FileName);*/
-
-
 
 
 /*    public static nint GetImGuiHandle(ImageCombination combo)  //need to add some cache shit here
