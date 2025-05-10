@@ -136,6 +136,12 @@ public class ImageCombination
         Service.Framework.Run(Compile);
     }
 
+    public void RemoveLayer(ImageLayer layer)
+    {
+        layers.Remove(layer);
+        Compile();
+    }
+
 
 
     public async Task Compile()

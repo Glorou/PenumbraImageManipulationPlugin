@@ -1,8 +1,8 @@
 {
   "Author": "Karou",
-  "Name": "Penumbra Image Manipulation Plugin",
-  "Punchline": "A short one-liner that shows up in /xlplugins.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+  "Name": "Penumbra Image Manipulation Plugin", 
+  "Punchline": "Overlay textures in-game quickly", 
+  "Description": "A relatively robust tool that allows you to non-destructively edit textures.",
   "ApplicableVersion": "any",
   "Tags": [
   ]
