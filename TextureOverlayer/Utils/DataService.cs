@@ -51,6 +51,15 @@ public class DataService
                 layer.GetTexture().Dispose();
             }
             _allCombinations.RemoveAll(x => x.Name == name);
+            if (File.Exists(Service.Configuration.PluginFolder + "\\" + name + ".json"))
+            {
+                File.Delete(Service.Configuration.PluginFolder + "\\" + name + ".json");
+            }
+
+            if (File.Exists(Service.Configuration.PluginFolder + "\\" + name + ".tex"))
+            {
+                File.Delete(Service.Configuration.PluginFolder + "\\" + name + ".tex");
+            }
             return true;
         }catch (Exception e)
         {

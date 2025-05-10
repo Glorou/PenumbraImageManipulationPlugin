@@ -70,6 +70,7 @@ public partial class CombinedTexture
             CombineOp.Over          => resizeOp,
             CombineOp.Under         => resizeOp,
             CombineOp.CopyChannels  => resizeOp,
+            CombineOp.SubtractChannels  => resizeOp,
             _                       => throw new ArgumentException($"Invalid combine operation {combineOp}"),
         };
 

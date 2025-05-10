@@ -123,12 +123,29 @@ public class MainWindow : Window, IDisposable
             }
 
         }
-        if (ImGui.Button("Save Selected Texture"))
+
+        if (selectedCombination != null && selectedCombination.Layers.Count >= 1)
         {
-            selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
-            Service.DataService.WriteConfig(selectedCombination);
+            if (ImGui.Button("Save Selected Texture"))
+            {
+                selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
+                Service.DataService.WriteConfig(selectedCombination);
+                selectedCombination.Compile();
+                Service.penumbraApi.RedrawAll();
+            }
+
+            ReloadFromFileButton();
+            if (ImGui.Button("Delete Selected Texture"))
+            {
+                var _name = selectedCombination.Name;
+
+                Service.DataService.RemoveImageCombination(_name);
+                selectedCombination = Service.DataService.AllCombinations.Any()
+                                          ? Service.DataService.AllCombinations.First()
+                                          : null;
+            }
         }
-        ReloadFromFileButton();
+
         ImGui.EndGroup();
         
 
@@ -280,21 +297,46 @@ public class MainWindow : Window, IDisposable
                             }
                         }
                         
-                        using (ImRaii.Combo("##operationPicker", TextureHandler.ResizeOpLabels[(int)selectedCombination.Layers[selectedIndex]._combineOp]))
-                        {
-                            if(ImGui.Selectable(TextureHandler.ResizeOpLabels[0]))
-                            {
-                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.Over;
-                            }
-                            if(ImGui.Selectable(TextureHandler.ResizeOpLabels[4]))
-                            {
-                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SubtractChannels;
-                            }
-                        }
+
                         
                         //TODO: Add opacity and image combination mode here
                     }
+                    
                 }
+
+
+
+
+                ImGui.BeginChild("##LayerOps",
+                                 new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y));
+                if (selectedCombination.Layers.Count > selectedIndex && selectedIndex >= 0)
+                {
+                    using (var combo = ImRaii.Combo("##operationPicker",
+                                                    TextureHandler.ResizeOpLabels[
+                                                        (int)selectedCombination.Layers[selectedIndex]._combineOp]))
+                    {
+                        if (combo.Success)
+                        {
+                            if (ImGui.Selectable(TextureHandler.ResizeOpLabels[0]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.Over;
+                                selectedCombination.Compile();
+                            }
+
+                            if (ImGui.Selectable(TextureHandler.ResizeOpLabels[4]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SubtractChannels;
+                                selectedCombination.Compile();
+                            }
+                        }
+                    }
+
+                    if (ImGui.Button("Delete Layer"))
+                    {
+                        selectedCombination.RemoveLayer(selectedCombination.Layers[selectedIndex]);
+                    }
+                }
+
                 ImGui.TextUnformatted("New Layer from:");
 
                 if(ImGui.Button("Penumbra mod"))
@@ -318,7 +360,7 @@ public class MainWindow : Window, IDisposable
                                                              }, 1, null );
                 }
 
-                
+                ImGui.EndChild();
             }
         }
     }
