@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -23,7 +24,7 @@ public class MainWindow : Window, IDisposable
     private Plugin Plugin;
     private static string name = string.Empty;
     private ImageCombination selectedCombination = null;
-    private static int selectedIndex = 0;
+    private static int selectedIndex = -1;
     private String tempGamePath = string.Empty;
 
     private Vector4 transparent = new Vector4(0f, 0f, 0f, 0f);
@@ -35,7 +36,7 @@ public class MainWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(800, 600),
+            MinimumSize = new Vector2(650, 400),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -54,6 +55,21 @@ public class MainWindow : Window, IDisposable
             ImGui.PushStyleColor(ImGuiCol.ButtonHovered, transparent);
             ImGui.PushStyleColor(ImGuiCol.Button, transparent);
 
+    }
+    
+    public void SelectableInput(String test){}
+
+    public void ReloadFromFileButton()
+    {
+        bool _enabled = File.Exists(Service.Configuration.PluginFolder + "\\" + selectedCombination.Name + ".json");
+        
+        if (!_enabled){ImGui.BeginDisabled();}
+        if (ImGui.Button("Reload from File"))
+        {
+            selectedCombination = Service.DataService.ReloadComboFromFile(selectedCombination);
+            
+        }
+        if (!_enabled){ImGui.EndDisabled();}
     }
     public override void Draw()
     {
@@ -112,99 +128,115 @@ public class MainWindow : Window, IDisposable
             selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
             Service.DataService.WriteConfig(selectedCombination);
         }
+        ReloadFromFileButton();
         ImGui.EndGroup();
         
 
         ImGui.SameLine();
         ImGui.BeginGroup();
-        //TODO: Add show/hide layer & layer modifications
         //TODO: Make a load wheel and figure out how to not lock up the game while the compile process runs
         using (var previewer = ImRaii.Child("previewer"))
         {
-
-            if (selectedCombination != null && selectedCombination.Layers.Count >= 1 && selectedCombination.LoadState == 2)
+            using (var imageContainer = ImRaii.Child("imageContainer", new Vector2(ImGui.GetContentRegionAvail().X * .75f, ImGui.GetContentRegionAvail().Y)))
             {
-                //TextureDrawer.Draw(selectedCombination.GetTexture(),new Vector2((ImGui.GetContentRegionAvail().X), (ImGui.GetContentRegionAvail().X)));
-                selectedCombination.CombinedTexture.Draw(Service.TextureManager,
-                                                         new Vector2((ImGui.GetContentRegionAvail().X * .75f), (ImGui.GetContentRegionAvail().X * .75f)));
-                
-                if (ImGui.Button("Select Collection"))
+                if (selectedCombination != null && selectedCombination.Layers.Count >= 1 &&
+                    selectedCombination.LoadState == 2)
                 {
-                    ImGui.OpenPopup("Select Collection##Window");
+                    selectedCombination.CombinedTexture.Draw(Service.TextureManager,
+                                                             new Vector2(
+                                                                 (Math.Min(ImGui.GetContentRegionAvail().X,
+                                                                           ImGui.GetContentRegionAvail().Y) * .75f),
+                                                                 Math.Min(ImGui.GetContentRegionAvail().X,
+                                                                          ImGui.GetContentRegionAvail().Y) * .75f));
 
-                }
-                ImGui.SameLine();
-                if (ImGui.Button("Change redirect state"))
-                {
-                    selectedCombination.Enabled = !selectedCombination.Enabled;
-                }
-                ImGui.SameLine();
-                if (selectedCombination.Enabled)
-                {
-                    ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0,204,0,1));
-                    ImGui.TextUnformatted("Penumbra redirect enabled");
-                    using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+                    if (ImGui.Button("Select Collection"))
                     {
-                        ImGui.SameLine();
-                        ImGui.Text( FontAwesomeIcon.Check.ToIconString());
+                        ImGui.OpenPopup("Select Collection##Window");
+
                     }
 
-                }
-                else
-                {
-
-                    ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(220,0,0,1));
-                    ImGui.TextUnformatted("Penumbra redirect disabled");
-                    using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+                    ImGui.SameLine();
+                    if (ImGui.Button("Change redirect state"))
                     {
-                        ImGui.SameLine();
-                        ImGui.Text( FontAwesomeIcon.Times.ToIconString());
+                        selectedCombination.Enabled = !selectedCombination.Enabled;
                     }
 
-                }
-                ImGui.PopStyleColor(1);
-                
-                using(var popup = ImRaii.Popup("Select Collection##Window"))
-                {
-                    if (popup)
+                    ImGui.SameLine();
+                    if (selectedCombination.Enabled)
                     {
-                        foreach (var collection in Service.penumbraApi.GetCollections())
+                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 204, 0, 1));
+                        ImGui.TextUnformatted("Penumbra redirect enabled");
+                        using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
                         {
-                            if (ImGui.Selectable(collection.Value))
-                            {
-                                selectedCombination.collection = (collection.Key, collection.Value);
-                            }
-                            /*
-                             *                            if (ImGui.Selectable(collection.Value,false , ImGuiSelectableFlags.AllowDoubleClick)&& ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                            {
-                                selectedCombination.collection = (collection.Key, collection.Value);
-                            }
-                             *
-                             */
+                            ImGui.SameLine();
+                            ImGui.Text(FontAwesomeIcon.Check.ToIconString());
+                        }
+
+                    }
+                    else
+                    {
+
+                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(220, 0, 0, 1));
+                        ImGui.TextUnformatted("Penumbra redirect disabled");
+                        using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+                        {
+                            ImGui.SameLine();
+                            ImGui.Text(FontAwesomeIcon.Times.ToIconString());
                         }
 
                     }
 
-                }
+                    ImGui.PopStyleColor(1);
 
-                tempGamePath = selectedCombination.gamepath;
-                ImGui.InputText("Game path to replace:", ref tempGamePath, 128);
-                ImGui.SameLine();
-                if (ImGui.Button("Set"))
+                    using (var popup = ImRaii.Popup("Select Collection##Window"))
+                    {
+                        if (popup)
+                        {
+                            foreach (var collection in Service.penumbraApi.GetCollections())
+                            {
+                                if (ImGui.Selectable(collection.Value))
+                                {
+                                    selectedCombination.collection = (collection.Key, collection.Value);
+                                }
+                                /*
+                                 *                            if (ImGui.Selectable(collection.Value,false , ImGuiSelectableFlags.AllowDoubleClick)&& ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                                {
+                                    selectedCombination.collection = (collection.Key, collection.Value);
+                                }
+                                 *
+                                 */
+                            }
+
+                        }
+
+                    }
+
+                    tempGamePath = selectedCombination.gamepath;
+                    ImGui.TextUnformatted("Game path to replace:");
+                    ImGui.InputText("##replacePath", ref tempGamePath, 128);
+                    ImGui.SameLine();
+                    if (ImGui.Button("Set"))
+                    {
+                        selectedCombination.gamepath = tempGamePath;
+                    }
+
+
+
+                }
+                else
                 {
-                    selectedCombination.gamepath = tempGamePath;  
+                    ImGui.Image(
+                        Service.TextureProvider
+                               .GetFromManifestResource(Assembly.GetExecutingAssembly(),
+                                                        "TextureOverlayer.Placeholder.png").GetWrapOrEmpty()
+                               .ImGuiHandle,
+                        new Vector2((Math.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y) * .75f),
+                                    Math.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y) * .75f));
                 }
-                
 
-                
+                ImGui.EndGroup();
+  
             }
-            else
-            {
-                ImGui.Image(Service.TextureProvider.GetFromManifestResource(Assembly.GetExecutingAssembly(), "TextureOverlayer.Placeholder.png").GetWrapOrEmpty().ImGuiHandle,
-                            new Vector2((Math.Min(ImGui.GetContentRegionAvail().X,ImGui.GetContentRegionAvail().Y) * .75f), Math.Min(ImGui.GetContentRegionAvail().X,ImGui.GetContentRegionAvail().Y) * .75f));
-            }
-            
-            ImGui.EndGroup();
             ImGui.SameLine();
             ImGui.BeginGroup();
             if (selectedCombination != null && selectedCombination.Layers.Count >= 0)
@@ -215,14 +247,24 @@ public class MainWindow : Window, IDisposable
                                                             ImGui.GetContentRegionAvail().Y * 0.50f), true))
                 {
                     // Check if this child is drawing
+                    //TODO: Make this drag and dropable for reordering layers and remove the eye from the base layer
                     if (child.Success)
                     {
                         foreach (var image in selectedCombination.Layers)
                         {
                             var hovered = false;
-                            if (ImGui.Selectable($"{image._friendlyName}", hovered, ImGuiSelectableFlags.AllowItemOverlap))
+                            //TODO: Make selectable in to text box on double click
+                            if (ImGui.Selectable($"{image._friendlyName}", (selectedIndex == selectedCombination.Layers.IndexOf(image)), ImGuiSelectableFlags.AllowItemOverlap))
                             {
-                                selectedIndex = selectedCombination.Layers.FindLastIndex(u => u.GetTexture().Path == image.GetTexture().Path);
+                                if (selectedIndex == selectedCombination.Layers.IndexOf(image))
+                                {
+                                    selectedIndex = -1;
+                                }
+                                else
+                                {
+                                    selectedIndex = selectedCombination.Layers.FindLastIndex(u => u.GetTexture().Path == image.GetTexture().Path);
+                                }
+
                             }
                             ImGui.SameLine();
                             using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push()) {
@@ -238,6 +280,19 @@ public class MainWindow : Window, IDisposable
                             }
                         }
                         
+                        using (ImRaii.Combo("##operationPicker", TextureHandler.ResizeOpLabels[(int)selectedCombination.Layers[selectedIndex]._combineOp]))
+                        {
+                            if(ImGui.Selectable(TextureHandler.ResizeOpLabels[0]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.Over;
+                            }
+                            if(ImGui.Selectable(TextureHandler.ResizeOpLabels[4]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SubtractChannels;
+                            }
+                        }
+                        
+                        //TODO: Add opacity and image combination mode here
                     }
                 }
                 ImGui.TextUnformatted("New Layer from:");

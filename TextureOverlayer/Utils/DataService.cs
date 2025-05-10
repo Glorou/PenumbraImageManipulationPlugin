@@ -13,7 +13,7 @@ namespace TextureOverlayer.Utils;
 
 
 
-//TODO: Save the configs 
+
 //TODO: Copy entire class when selected, so we dont have to compare to the file? maybe?
 public class DataService
 {
@@ -71,6 +71,7 @@ public class DataService
     public void ClearSelectedCombo() => selectedCombination = String.Empty;
 
 
+    //TODO: Figure out a better more robust naming scheme for this 
     public void WriteConfig(ImageCombination combination)
     {
         var json = JsonConvert.SerializeObject(combination, Formatting.Indented);
@@ -78,6 +79,14 @@ public class DataService
         
     }
 
+    public ImageCombination ReloadComboFromFile(ImageCombination combination)
+    {
+        var _path = Service.Configuration.PluginFolder + "\\" + combination.Name + ".json";
+        RemoveImageCombination(combination.Name);
+        var temp = ReadConfig(_path);
+        _allCombinations.Add(temp);
+        return temp;
+    }
 
     
     //TODO: Add support for BC compression
