@@ -94,6 +94,7 @@ public class MainWindow : Window, IDisposable
                     {
                         selectedCombination = combo;
                         selectedCombination.Compile();
+                        tempGamePath = combo._gamepath;
                     }
 
 
@@ -228,13 +229,13 @@ public class MainWindow : Window, IDisposable
 
                     }
 
-                    tempGamePath = selectedCombination.gamepath;
+
                     ImGui.TextUnformatted("Game path to replace:");
                     ImGui.InputText("##replacePath", ref tempGamePath, 128);
                     ImGui.SameLine();
                     if (ImGui.Button("Set"))
                     {
-                        selectedCombination.gamepath = tempGamePath;
+                        selectedCombination._gamepath = tempGamePath;
                     }
 
 

@@ -69,7 +69,8 @@ public class ImageCombination
     private (int width, int height) res;
     List<ImageLayer> layers = new List<ImageLayer>();
     public (Guid, string) collection;
-    public String gamepath { get; set; } = string.Empty;
+    public String _gamepath = string.Empty;
+    
     
     [JsonIgnore]
     private List<CombinedTexture> _sandwich = new List<CombinedTexture>();
@@ -77,6 +78,7 @@ public class ImageCombination
     private CombinedTexture comboTex = new CombinedTexture(new Texture(), new Texture());
     [JsonIgnore]
     public int LoadState { get; set; } //0 == not loaded 1 == loading 2 == loaded
+
 
     
 
