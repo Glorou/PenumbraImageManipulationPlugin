@@ -143,8 +143,7 @@ public class ImageCombination
         layers.Remove(layer);
         Compile();
     }
-
-
+    
 
     public async Task Compile()
     {
