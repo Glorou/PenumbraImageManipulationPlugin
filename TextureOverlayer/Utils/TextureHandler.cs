@@ -216,7 +216,9 @@ public class ImageLayer
     public CombineOp _combineOp    = CombineOp.Over;
     public ResizeOp  _resizeOp     = ResizeOp.None;
     public Channels  _copyChannels = Channels.Red | Channels.Green | Channels.Blue | Channels.Alpha;
-    public Blake3.Hash _fileHash;
+
+
+    public Blake3.Hash _fileHash; //TODO: this isnt working, like what the sigma
     public bool _enabled = true;
     public String _friendlyName = string.Empty;
     
@@ -235,11 +237,25 @@ public class ImageLayer
         _friendlyName = _path.Split('\\').Last().Split(".").First();
     }
     
+    [JsonConstructor]
+    public ImageLayer(Blake3.Hash _fileHash, CombineOp combineOp, ResizeOp resizeOp, bool enabled = true)
+    {
+
+        Texture texture = new Texture();
+        _fileHash = Service.CacheService.TryGetCache(texture, _fileHash);
+        this._texture = texture;
+        this._combineOp = combineOp;
+        this._resizeOp = resizeOp;
+        _enabled = enabled;
+    }
+
+    
     public void FlipState()
     {
         _enabled = !_enabled;
         
     }
+    
 
     public String getEyecon()
     {

@@ -266,6 +266,7 @@ public class MainWindow : Window, IDisposable
                 {
                     // Check if this child is drawing
                     //TODO: Make this drag and dropable for reordering layers and remove the eye from the base layer
+                    //TODO: Flip this lol
                     if (child.Success)
                     {
                         foreach (var image in selectedCombination.Layers)

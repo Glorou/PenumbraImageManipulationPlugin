@@ -71,6 +71,11 @@ public class CacheService
         }
 
     }
+    public Blake3.Hash TryGetCache(Texture texture, Blake3.Hash _hash)
+    {
+        texture.Load(Service.TextureManager,_cacheDir + _rawCache[_hash]);
+        return _hash;
+    }
 
     private String GenerateAppend()
     {

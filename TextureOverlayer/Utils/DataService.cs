@@ -79,11 +79,29 @@ public class DataService
 
     public void ClearSelectedCombo() => selectedCombination = String.Empty;
 
+    public class HashConverter : JsonConverter<Blake3.Hash>
+    {
+        public override void WriteJson(JsonWriter writer, Blake3.Hash value, JsonSerializer serializer)
+        {
+            writer.WriteValue(System.Convert.ToBase64String(value.AsSpan()));
+        }
 
+        public override Blake3.Hash ReadJson(JsonReader reader, Type objectType, Blake3.Hash existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            Blake3.Hash hash = new Blake3.Hash();
+            ReadOnlySpan<byte> ros = new ReadOnlySpan<byte>();
+            ros = Convert.FromBase64String((String)reader.Value);
+            hash.CopyFromBytes(ros);
+
+            return hash;
+        }
+    }
+    
+    
     //TODO: Figure out a better more robust naming scheme for this 
     public void WriteConfig(ImageCombination combination)
     {
-        var json = JsonConvert.SerializeObject(combination, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(combination, Formatting.Indented, new HashConverter());
         FilesystemUtil.WriteAllTextSafe(Service.Configuration.PluginFolder + $"\\{combination.Name}.json", json);
         
     }
@@ -110,22 +128,18 @@ public class DataService
 
     public ImageCombination ReadConfig(String path)
     {
-        try
-        {
+
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new HashConverter());
             using StreamReader reader = new(path);
             string json = reader.ReadToEnd();
             JObject imageCombName = JObject.Parse(json);
             JToken comboName = imageCombName["Name"];
             var tempCombo = new ImageCombination(comboName.ToString());
-            JsonConvert.PopulateObject(json,tempCombo);
+            JsonConvert.PopulateObject(json,tempCombo,settings);
             return tempCombo;
-        }
-        catch (Exception e)
-        {
 
-        }
         
-        return null;
     }
     
     
