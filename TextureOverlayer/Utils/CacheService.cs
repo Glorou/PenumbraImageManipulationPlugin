@@ -14,6 +14,7 @@ namespace TextureOverlayer.Utils;
 /// This is going to host file hashes for already saved files to compare against when adding new layers.
 /// This will resolve SHA256 hashes to filenames during the loading phase either during the startup OR layer add phases.
 /// </summary>
+/// TODO: Redirect to the actual Texture instance if I can to save memory
 public class CacheService
 {
 
@@ -26,6 +27,16 @@ public class CacheService
         LoadCache();
     }
 
+    //temporary workaround
+    private void LoadCache()
+    {
+        foreach (var file in Directory.GetFiles(_cacheDir))
+        {
+            _rawCache.Add(Blake3.Hasher.Hash(File.ReadAllBytes(file)),file.Split('\\').Last()); ;
+        }
+    }
+    
+/*
     private void LoadCache()
     {
         if (File.Exists(_cacheDir + "\\_cache.json"))
@@ -48,7 +59,9 @@ public class CacheService
         var json = JsonConvert.SerializeObject(_rawCache, Formatting.Indented);
         FilesystemUtil.WriteAllTextSafe(_cacheDir + "\\_cache.json", json);
     }
-    
+    */
+
+
 
     public Blake3.Hash TryGetCache(Texture texture, string _path)
     {
@@ -65,7 +78,7 @@ public class CacheService
             File.Copy(_path, _cacheDir + _newFileName );
             _rawCache.Add(hash, _newFileName);
             texture.Load(Service.TextureManager,_cacheDir + _newFileName);
-            WriteCache();
+            //WriteCache();
             return hash;
 
         }
