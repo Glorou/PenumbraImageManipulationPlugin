@@ -12,9 +12,9 @@
     "DalamudApiLevel": 12,
     "LoadPriority": 0,
     "DownloadCount": 0,
-    "DownloadLinkInstall": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.1/v0.1.zip",
-    "DownloadLinkTesting": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.1/v0.1.zip",
-    "DownloadLinkUpdate": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.1/v0.1.zip",
+    "DownloadLinkInstall": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.2/v0.2.zip",
+    "DownloadLinkTesting": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.2/v0.2.zip",
+    "DownloadLinkUpdate": "https://github.com/Glorou/PenumbraImageManipulationPlugin/releases/download/v0.2/v0.2.zip",
     "IconUrl": "",
     "_isDip17Plugin": false,
     "_Dip17Channel": null
