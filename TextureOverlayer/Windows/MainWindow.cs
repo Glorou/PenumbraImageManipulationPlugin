@@ -269,7 +269,7 @@ public class MainWindow : Window, IDisposable
                     //TODO: Flip this lol
                     if (child.Success)
                     {
-                        foreach (var image in selectedCombination.Layers)
+                        foreach (var image in selectedCombination.Layers.AsEnumerable().Reverse())
                         {
                             var hovered = false;
                             //TODO: Make selectable in to text box on double click
