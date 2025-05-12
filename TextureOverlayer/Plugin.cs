@@ -80,6 +80,7 @@ public class Plugin : IDalamudPlugin
         // Use /xllog to open the log window in-game
         // Example Output: 00:57:54.959 | INF | [TextureOverlayer] ===A cool log message from Sample Plugin===
         Service.Log.Information($"===A cool log message from {pluginInterface.Manifest.Name}===");
+        Service.CacheService = new CacheService();
         var existingConfs = Directory.GetFiles(Service.Configuration.PluginFolder, "*.json");
         foreach (var path in existingConfs)
         {

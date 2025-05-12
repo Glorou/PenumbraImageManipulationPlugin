@@ -94,13 +94,23 @@ namespace TextureOverlayer.Interop
        {
            if (Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer"))
            {
-               return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+               if(Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw"))
+               {
+                   return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+               }
+               else
+               {
+                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
+                   return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+               }
+
            }
            else
            {
                try
                {
-                   System.IO.Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer");
+                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer");
+                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
                    return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
                }
                catch (Exception e)
