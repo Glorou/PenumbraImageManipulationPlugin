@@ -216,7 +216,7 @@ public class ImageLayer
     public CombineOp _combineOp    = CombineOp.Over;
     public ResizeOp  _resizeOp     = ResizeOp.None;
     public Channels  _copyChannels = Channels.Red | Channels.Green | Channels.Blue | Channels.Alpha;
-    public String _path = string.Empty;
+    public Blake3.Hash _fileHash;
     public bool _enabled = true;
     public String _friendlyName = string.Empty;
     
@@ -225,14 +225,14 @@ public class ImageLayer
 
     public ImageLayer(String _path, CombineOp combineOp, ResizeOp resizeOp, bool enabled = true)
     {
-        this._path = _path;
+
         Texture texture = new Texture();
-        texture.Load(Service.TextureManager, _path);
+        _fileHash = Service.CacheService.TryGetCache(texture, _path);
         this._texture = texture;
         this._combineOp = combineOp;
         this._resizeOp = resizeOp;
         _enabled = enabled;
-        _friendlyName = texture.Path.Split('\\').Last();
+        _friendlyName = _path.Split('\\').Last().Split(".").First();
     }
     
     public void FlipState()

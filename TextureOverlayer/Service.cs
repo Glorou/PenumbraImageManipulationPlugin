@@ -4,6 +4,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.Resource;
+using TextureOverlayer.Utils;
 
 namespace TextureOverlayer
 {
@@ -36,7 +37,9 @@ namespace TextureOverlayer
         public static PenumbraIpc penumbraApi { get; set; } = null!;
         public static Textures.TextureManager TextureManager { get; set; } = null!;
         public static FileDialogManager FileDialogManager { get; set; } = null!;
-        public static Utils.DataService DataService { get; set; } = null!;
+        public static DataService DataService { get; set; } = null!;
+        
+        public static CacheService CacheService { get; set; } = null!;
 
     }
 }
