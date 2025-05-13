@@ -11,6 +11,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
+using TextureOverlayer.Interop;
 using TextureOverlayer.Textures;
 using TextureOverlayer.Utils;
 
@@ -28,6 +29,10 @@ public class MainWindow : Window, IDisposable
     private String tempGamePath = string.Empty;
 
     private Vector4 transparent = new Vector4(0f, 0f, 0f, 0f);
+
+    private Vector4 green = new Vector4(0, 204, 0, 1);
+
+    private Vector4 red = new Vector4(220, 0, 0, 1);
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
@@ -56,7 +61,77 @@ public class MainWindow : Window, IDisposable
             ImGui.PushStyleColor(ImGuiCol.Button, transparent);
 
     }
-    
+
+    public void PenumbraButton()
+    {
+        bool disableButton = selectedCombination.FileName == string.Empty ||
+                            !Path.Exists(Service.Configuration.PluginFolder + "\\" + selectedCombination.FileName) ||
+                            selectedCombination._gamepath == string.Empty || selectedCombination.collection.Count == 0;
+        Vector4 _savedFile = (selectedCombination.FileName == string.Empty ||
+                              !Path.Exists(Service.Configuration.PluginFolder + "\\" + selectedCombination.FileName)) ? red : green;
+        Vector4 _pathSet = selectedCombination._gamepath == string.Empty ? red : green;
+        Vector4 _collectionSet = selectedCombination.collection.Count == 0 ? red : green;
+        
+        if (disableButton)
+        {
+            ImGui.BeginDisabled();
+        }
+        if (ImGui.Button("Change redirect state"))
+        {
+            selectedCombination.Enabled = !selectedCombination.Enabled;
+        }
+        if (disableButton)
+        {
+            if(ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
+                using (var tool = ImRaii.Tooltip())
+                {
+                    ImGui.TextUnformatted("To set the Penumbra redirect you need to:\n");
+                    using (ImRaii.PushColor(ImGuiCol.Text, _pathSet))
+                    {
+                        ImGui.BulletText("Set a proper game path\n");
+                    }
+                    using (ImRaii.PushColor(ImGuiCol.Text, _collectionSet))
+                    {
+                        ImGui.BulletText("Set at least one collection\n");
+                    }
+                    using (ImRaii.PushColor(ImGuiCol.Text, _savedFile))
+                    {
+                        ImGui.BulletText("Save the Texture\n");
+                    }
+                    
+                }
+            }
+            ImGui.EndDisabled();
+        }
+
+        ImGui.SameLine();
+        if (selectedCombination.Enabled)
+        {
+            ImGui.PushStyleColor(ImGuiCol.Text, green);
+            ImGui.TextUnformatted("Penumbra redirect enabled");
+            using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+            {
+                ImGui.SameLine();
+                ImGui.Text(FontAwesomeIcon.Check.ToIconString());
+            }
+
+        }
+        else
+        {
+
+            ImGui.PushStyleColor(ImGuiCol.Text, red);
+            ImGui.TextUnformatted("Penumbra redirect disabled");
+            using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+            {
+                ImGui.SameLine();
+                ImGui.Text(FontAwesomeIcon.Times.ToIconString());
+            }
+
+        }
+
+        ImGui.PopStyleColor(1);
+    }
     public void SelectableInput(String test){}
 
     public void ReloadFromFileButton()
@@ -174,56 +249,45 @@ public class MainWindow : Window, IDisposable
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.Button("Change redirect state"))
-                    {
-                        selectedCombination.Enabled = !selectedCombination.Enabled;
-                    }
+                    PenumbraButton();
 
-                    ImGui.SameLine();
-                    if (selectedCombination.Enabled)
-                    {
-                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 204, 0, 1));
-                        ImGui.TextUnformatted("Penumbra redirect enabled");
-                        using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
-                        {
-                            ImGui.SameLine();
-                            ImGui.Text(FontAwesomeIcon.Check.ToIconString());
-                        }
-
-                    }
-                    else
-                    {
-
-                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(220, 0, 0, 1));
-                        ImGui.TextUnformatted("Penumbra redirect disabled");
-                        using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
-                        {
-                            ImGui.SameLine();
-                            ImGui.Text(FontAwesomeIcon.Times.ToIconString());
-                        }
-
-                    }
-
-                    ImGui.PopStyleColor(1);
-
-                    using (var popup = ImRaii.Popup("Select Collection##Window"))
+                    using (var popup = ImRaii.ContextPopupItem("Select Collection##Window"))
                     {
                         if (popup)
                         {
+                            
                             foreach (var collection in Service.penumbraApi.GetCollections())
                             {
-                                if (ImGui.Selectable(collection.Value))
+                                if(selectedCombination.collection.ContainsKey(collection.Key))
                                 {
-                                    selectedCombination.collection = (collection.Key, collection.Value);
+                                    ImGui.PushStyleColor(ImGuiCol.Text, green);
                                 }
-                                /*
-                                 *                            if (ImGui.Selectable(collection.Value,false , ImGuiSelectableFlags.AllowDoubleClick)&& ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                                if (ImGui.Selectable(collection.Value, false, (ImGuiSelectableFlags)17))
                                 {
-                                    selectedCombination.collection = (collection.Key, collection.Value);
+                                    selectedCombination.AddRemoveCollection((collection.Key,collection.Value));
                                 }
-                                 *
-                                 */
+                                if(selectedCombination.collection.ContainsKey(collection.Key))
+                                {
+                                    ImGui.PopStyleColor(1);
+                                }
+
+                                /*if (selectedCombination.collection.ContainsKey(collection.Key))
+                                {
+                                    using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+                                    {
+                                        ImGui.SameLine(Service.PluginInterface.UiBuilder.DefaultFontSpec.SizePx  * (collection.Value.Length ) );
+                                        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X- (Service.PluginInterface.UiBuilder.DefaultFontSpec.SizePx * 1f));
+                                        ImGui.Text(FontAwesomeIcon.Check.ToIconString());
+                                    }
+                                }*/
+
                             }
+                            ImGui.Separator();
+                            if(ImGui.Selectable("Close"))   //new Vector2(ImGui.GetContentRegionAvail().X, Service.PluginInterface.UiBuilder.DefaultFontSpec.SizePx * ImGuiHelpers.GlobalScale * 1.5f))
+                            {
+                                ImGui.CloseCurrentPopup();
+                            }
+
 
                         }
 
@@ -313,6 +377,35 @@ public class MainWindow : Window, IDisposable
                                  new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y));
                 if (selectedCombination.Layers.Count > selectedIndex && selectedIndex >= 0)
                 {
+                    
+                    //up is down, down is up AAAAAAAAAAAAAAAAAAAAAAA
+                    ImGui.BeginChild("##LayerMover",
+                        new Vector2(ImGui.GetContentRegionAvail().X, Service.PluginInterface.UiBuilder.DefaultFontSpec.SizePx * 1.5f));
+                    using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push()) {
+                        
+
+                        if(selectedCombination.Layers[selectedIndex] == selectedCombination.Layers.Last()){ImGui.BeginDisabled();}
+                        if (ImGui.Button($"{FontAwesomeIcon.ArrowUp.ToIconString()}", new Vector2(ImGui.GetContentRegionAvail().X * .5f, ImGui.GetContentRegionAvail().Y)))
+                        {
+                            TextureHandler.Swap(selectedCombination.Layers, selectedIndex, selectedIndex + 1);
+                            selectedIndex++;
+                            selectedCombination.Compile();
+                        }
+                        if(selectedCombination.Layers[selectedIndex] == selectedCombination.Layers.Last()){ImGui.EndDisabled();}
+                        if(selectedCombination.Layers[selectedIndex] == selectedCombination.Layers.First()){ImGui.BeginDisabled();}
+                        ImGui.SameLine();
+                        if (ImGui.Button($"{FontAwesomeIcon.ArrowDown.ToIconString()}",new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y)))
+                        {
+                            TextureHandler.Swap(selectedCombination.Layers, selectedIndex, selectedIndex - 1);
+                            selectedIndex--;
+                            selectedCombination.Compile();
+                        }
+                        if(selectedCombination.Layers[selectedIndex] == selectedCombination.Layers.First()){ImGui.EndDisabled();}
+                        
+                    }
+                    ImGui.EndChild();
+                    
+                    
                     using (var combo = ImRaii.Combo("##operationPicker",
                                                     TextureHandler.ResizeOpLabels[
                                                         (int)selectedCombination.Layers[selectedIndex]._combineOp]))

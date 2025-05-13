@@ -109,9 +109,12 @@ public class DataService
     public ImageCombination ReloadComboFromFile(ImageCombination combination)
     {
         var _path = Service.Configuration.PluginFolder + "\\" + combination.Name + ".json";
-        RemoveImageCombination(combination.Name);
+
         var temp = ReadConfig(_path);
+        RemoveImageCombination(combination.Name);
         _allCombinations.Add(temp);
+        WriteConfig(temp);
+        temp.Compile();
         return temp;
     }
 

@@ -16,7 +16,9 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Havok.Common.Serialize.Util;
 using ImGuiNET;
+using Lumina.Excel;
 using Newtonsoft.Json;
+using TextureOverlayer.Interop;
 using TextureOverlayer.Textures;
 
 namespace TextureOverlayer.Utils;
@@ -68,7 +70,7 @@ public class ImageCombination
     int position = -1;
     private (int width, int height) res;
     List<ImageLayer> layers = new List<ImageLayer>();
-    public (Guid, string) collection;
+    public Dictionary<Guid, string> collection = new Dictionary<Guid, string>();
     public String _gamepath = string.Empty;
     
     
@@ -80,6 +82,27 @@ public class ImageCombination
     public int LoadState { get; set; } //0 == not loaded 1 == loading 2 == loaded
 
 
+    public void AddRemoveCollection((Guid, string) Collection)
+    {
+        if (collection.ContainsKey(Collection.Item1))
+        {
+            if (Enabled)
+            {
+                Service.penumbraApi.RemoveTemporaryModCollection(this, Collection);
+            }
+            collection.Remove(Collection.Item1);
+            Service.DataService.WriteConfig(this);
+        }
+        else
+        {
+            if (Enabled)
+            {
+                Service.penumbraApi.AddTemporaryModCollection(this, Collection);
+            }
+            collection.Add(Collection.Item1, Collection.Item2);
+            Service.DataService.WriteConfig(this);
+        }
+    }
     
 
     public ImageCombination(String displayName)
@@ -143,6 +166,8 @@ public class ImageCombination
         layers.Remove(layer);
         Compile();
     }
+    
+
     
 
     public async Task Compile()
@@ -239,9 +264,9 @@ public class ImageLayer
     [JsonConstructor]
     public ImageLayer(Blake3.Hash _fileHash, CombineOp combineOp, ResizeOp resizeOp, bool enabled = true)
     {
-
+        this._fileHash = _fileHash;
         Texture texture = new Texture();
-        _fileHash = Service.CacheService.TryGetCache(texture, _fileHash);
+        Service.CacheService.TryGetCache(texture, _fileHash);
         this._texture = texture;
         this._combineOp = combineOp;
         this._resizeOp = resizeOp;
@@ -273,12 +298,17 @@ public static class TextureHandler
 {
     public static readonly IReadOnlyList<string> ResizeOpLabels = new string[]
     {
-        "Over",
+        "Overlay",
         "Under",
         "Right Multiply",
         "Copy Channels",
         "Subtract Channels",
     };
+    public static IList<T> Swap<T>(IList<T> list, int indexA, int indexB)
+    {
+        (list[indexA], list[indexB]) = (list[indexB], list[indexA]);
+        return list;
+    }
 
    /* public static nint GetImGuiHandle(ImageCombination file)
         => GetImGuiHandle(file.FileName);*/

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
+using OtterTex;
 using Penumbra.Api.Enums;
 using Penumbra.Api.Helpers;
 using Penumbra.Api.IpcSubscribers;
@@ -52,85 +53,109 @@ namespace TextureOverlayer.Interop
 
         public PenumbraApiEc AddTemporaryMod(ImageCombination texture)
         {
-            var temp = _addTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, new Dictionary<string, string>{{texture._gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99);
+            List <PenumbraApiEc> results = new();
+            foreach(var collection in texture.collection)
+            {
+                results.Add(_addTemporaryMod.Invoke(texture.Name +"TO", collection.Key, new Dictionary<string, string>{{texture._gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99));
+            }
+            
             _redrawAll.Invoke();
-            return temp;
+            return results.LastOrDefault();
 
         }
+
         public PenumbraApiEc RemoveTemporaryMod(ImageCombination texture)
         {
-            var temp =  _removeTemporaryMod.Invoke(texture.Name +"TO", texture.collection.Item1, 99);
+            List<PenumbraApiEc> results = new();
+            foreach (var collection in texture.collection)
+            {
+                results.Remove(_removeTemporaryMod.Invoke(texture.Name + "TO", collection.Key, 99));
+            }
+            _redrawAll.Invoke();
+            return results.LastOrDefault();
+        }
+
+        public PenumbraApiEc RemoveTemporaryModCollection(ImageCombination texture, (Guid, string) Collection)
+        {
+            var temp =  _removeTemporaryMod.Invoke(texture.Name +"TO", Collection.Item1, 99);
             _redrawAll.Invoke();
             return temp;
         }
-
+        
+        public PenumbraApiEc AddTemporaryModCollection(ImageCombination texture, (Guid, string) Collection)
+        {
+            var temp =  _addTemporaryMod.Invoke(texture.Name +"TO", Collection.Item1, new Dictionary<string, string>{{texture._gamepath, Service.Configuration.PluginFolder +"\\"+ texture.FileName}}, string.Empty, 99);
+            ;
+            _redrawAll.Invoke();
+            return temp;
+        }
         /*
-        private readonly EventSubscriber<string> modDeletedEventSubscriber = 
+        private readonly EventSubscriber<string> modDeletedEventSubscriber =
         ModDeleted.Subscriber(pluginInterface, Service.penumbraApi.UpdateModList);
-        private readonly EventSubscriber<string, string> modMovedEventSubscriber = 
+        private readonly EventSubscriber<string, string> modMovedEventSubscriber =
         ModMoved.Subscriber(pluginInterface, Service.penumbraApi.UpdateModList);*/
         
-       /* public  void UpdateModList(string empty)
-        {
-            Modlist = Service.penumbraApi.GetModList();
-        }
-        public  void UpdateModList(string empty, string empty1)
-        {
-            Modlist = Service.penumbraApi.GetModList();
-        } */
+            /* public  void UpdateModList(string empty)
+             {
+                 Modlist = Service.penumbraApi.GetModList();
+             }
+             public  void UpdateModList(string empty, string empty1)
+             {
+                 Modlist = Service.penumbraApi.GetModList();
+             } */
 
 
 
-       public List<String> GetTextureList(String modName)
-       {
+            public List<String> GetTextureList(String modName)
+            {
 
 
-           var files = Directory.GetFiles($"{Service.penumbraApi.GetModDirectory().ToString()}\\{modName}" , "*.tex", SearchOption.AllDirectories).ToList();
+                var files = Directory.GetFiles($"{Service.penumbraApi.GetModDirectory().ToString()}\\{modName}" , "*.tex", SearchOption.AllDirectories).ToList();
            
-           return files;
-       }
+                return files;
+            }
        
-       public String setupFolderStructure()
-       {
-           if (Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer"))
-           {
-               if(Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw"))
-               {
-                   return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
-               }
-               else
-               {
-                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
-                   return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
-               }
+            public String setupFolderStructure()
+            {
+                if (Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer"))
+                {
+                    if(Directory.Exists(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw"))
+                    {
+                        return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
+                        return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+                    }
 
-           }
-           else
-           {
-               try
-               {
-                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer");
-                   Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
-                   return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
-               }
-               catch (Exception e)
-               {
-                   Service.Log.Error(e.ToString());
-               }
+                }
+                else
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer");
+                        Directory.CreateDirectory(Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer\\Raw");
+                        return Service.penumbraApi.GetModDirectory().ToString() + "\\TextureOverlayer";
+                    }
+                    catch (Exception e)
+                    {
+                        Service.Log.Error(e.ToString());
+                    }
             
-           }
+                }
 
-           return String.Empty;
-       }
+                return String.Empty;
+            }
 
        
        
-        public void Dispose()
-        {
-            /*modAddedEventSubscriber.Dispose();
-            modDeletedEventSubscriber.Dispose();
-            modMovedEventSubscriber.Dispose();*/
-        }
+            public void Dispose()
+            {
+                /*modAddedEventSubscriber.Dispose();
+                modDeletedEventSubscriber.Dispose();
+                modMovedEventSubscriber.Dispose();*/
+            }
 
 
 
