@@ -56,7 +56,15 @@ public class DataService
                 File.Delete(Service.Configuration.PluginFolder + "\\" + name + ".json");
             }
 
-            if (File.Exists(Service.Configuration.PluginFolder + "\\" + name + ".tex"))
+            if (temp.Enabled)
+            {
+                foreach (var collection in temp.collection)
+                {
+                    Service.penumbraApi.RemoveTemporaryMod(temp);
+                }
+
+            }
+            if (File.Exists(Service.Configuration.PluginFolder + "\\" + name + ".tex" ) )
             {
                 File.Delete(Service.Configuration.PluginFolder + "\\" + name + ".tex");
             }

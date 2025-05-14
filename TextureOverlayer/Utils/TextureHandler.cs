@@ -25,16 +25,18 @@ namespace TextureOverlayer.Utils;
 
 public enum CombineOp
 {
-    LeftMultiply  = -4,
-    LeftCopy      = -3,
-    RightCopy     = -2,
-    Invalid       = -1,
-    Over          = 0,
-    Under         = 1,
-    RightMultiply = 2,
-    CopyChannels  = 3,
+    LeftMultiply     = -4,
+    LeftCopy         = -3,
+    RightCopy        = -2,
+    Invalid          = -1,
+    Over             = 0,
+    Under            = 1,
+    RightMultiply    = 2,
+    CopyChannels     = 3,
     SubtractChannels = 4,
+    MultiplyChannels = 5,
 }
+
 
 
 
@@ -302,7 +304,8 @@ public static class TextureHandler
         "Under",
         "Right Multiply",
         "Copy Channels",
-        "Subtract Channels",
+        "Subtract",
+        "Multiply"
     };
     public static IList<T> Swap<T>(IList<T> list, int indexA, int indexB)
     {

@@ -62,6 +62,24 @@ public class MainWindow : Window, IDisposable
 
     }
 
+    public void HelpMarker(string text)
+    {
+
+        using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
+        {
+            ImGui.TextDisabled(FontAwesomeIcon.QuestionCircle.ToIconString());;
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            using (var tip = ImRaii.Tooltip())
+            {
+                ImGui.PushTextWrapPos(ImGui.CalcTextSize(text.Substring(0, Math.Min(35, text.Length))).X);
+                ImGui.TextUnformatted(text);
+                ImGui.PopTextWrapPos();
+            }
+        }
+    }
     public void PenumbraButton()
     {
         bool disableButton = selectedCombination.FileName == string.Empty ||
@@ -82,6 +100,7 @@ public class MainWindow : Window, IDisposable
         }
         if (disableButton)
         {
+            ImGui.EndDisabled();
             if(ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
             {
                 using (var tool = ImRaii.Tooltip())
@@ -102,7 +121,7 @@ public class MainWindow : Window, IDisposable
                     
                 }
             }
-            ImGui.EndDisabled();
+
         }
 
         ImGui.SameLine();
@@ -247,10 +266,14 @@ public class MainWindow : Window, IDisposable
                         ImGui.OpenPopup("Select Collection##Window");
 
                     }
+                    ImGui.SameLine();
+                    HelpMarker("Penumbra inheritance doesn't work. Manually select all collections you want.");
 
                     ImGui.SameLine();
                     PenumbraButton();
-
+                    ImGui.SameLine();
+                    HelpMarker("Reminder:\nyou need to save for changes to show up.");
+                    
                     using (var popup = ImRaii.ContextPopupItem("Select Collection##Window"))
                     {
                         if (popup)
@@ -418,6 +441,11 @@ public class MainWindow : Window, IDisposable
                                 selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SubtractChannels;
                                 selectedCombination.Compile();
                             }
+                            /*if (ImGui.Selectable(TextureHandler.ResizeOpLabels[5]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.MultiplyChannels;
+                                selectedCombination.Compile();
+                            }*/
                         }
                     }
 
