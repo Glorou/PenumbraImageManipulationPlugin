@@ -8,15 +8,16 @@ public partial class CombinedTexture
 {
     private enum CombineOp
     {
-        LeftMultiply  = -4,
-        LeftCopy      = -3,
-        RightCopy     = -2,
-        Invalid       = -1,
-        Over          = 0,
-        Under         = 1,
-        RightMultiply = 2,
-        CopyChannels  = 3,
+        LeftMultiply     = -4,
+        LeftCopy         = -3,
+        RightCopy        = -2,
+        Invalid          = -1,
+        Over             = 0,
+        Under            = 1,
+        RightMultiply    = 2,
+        CopyChannels     = 3,
         SubtractChannels = 4,
+        MultiplyChannels = 5,
     }
 
     private enum ResizeOp
@@ -71,6 +72,7 @@ public partial class CombinedTexture
             CombineOp.Under         => resizeOp,
             CombineOp.CopyChannels  => resizeOp,
             CombineOp.SubtractChannels  => resizeOp,
+            CombineOp.MultiplyChannels  => resizeOp,
             _                       => throw new ArgumentException($"Invalid combine operation {combineOp}"),
         };
 

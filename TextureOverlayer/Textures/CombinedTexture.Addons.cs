@@ -33,7 +33,7 @@ public partial class CombinedTexture
         _multiplierLeft = matrix;
         return true;
     }
-    
+    //TODO: review this https://docs.krita.org/en/reference_manual/blending_modes/arithmetic.html#subtract
     private void SubtractPixels(int y, ParallelLoopState _)
     {
         for (var x = 0; x < _leftPixels.Width; ++x)
@@ -44,12 +44,30 @@ public partial class CombinedTexture
             var alpha  = left.W;
             var rgba = alpha == 0
                            ? new Rgba32()
-                           : new Rgba32(((left * left.W - right * right.W * (1 - right.W)) / alpha) with { W = alpha });
+                           : new Rgba32(((left * left.W - right * right.W) / alpha) with { W = alpha });
             _centerStorage.RgbaPixels[offset]     = rgba.R;
             _centerStorage.RgbaPixels[offset + 1] = rgba.G;
             _centerStorage.RgbaPixels[offset + 2] = rgba.B;
             _centerStorage.RgbaPixels[offset + 3] = rgba.A;
         }
     }
+    /*
+    private void MultiplyPixels(int y, ParallelLoopState _)
+    {
+        for (var x = 0; x < _leftPixels.Width; ++x)
+        {
+            var offset = (_leftPixels.Width * y + x) * 4;
+            var left   = DataLeft(offset);
+            var right  = DataRight(x, y);
+            var alpha  = left.W;
+            var rgba = alpha == 0
+                           ? new Rgba32()
+                           : new Rgba32(((((left * left.W) * (right * right.W) == Vector4.Zero)? (left * left.W) :(left * left.W) * (right * right.W)) / alpha) with { W = alpha });
+            _centerStorage.RgbaPixels[offset]     = rgba.R;
+            _centerStorage.RgbaPixels[offset + 1] = rgba.G;
+            _centerStorage.RgbaPixels[offset + 2] = rgba.B;
+            _centerStorage.RgbaPixels[offset + 3] = rgba.A;
+        }
+    }*/
     
 }
