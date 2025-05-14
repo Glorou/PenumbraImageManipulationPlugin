@@ -2,7 +2,8 @@
   "Author": "Karou",
   "Name": "Penumbra Image Manipulation Plugin", 
   "Punchline": "Overlay textures in-game quickly", 
-  "Description": "A relatively robust tool that allows you to non-destructively edit textures.",
+  "Description": "A relatively robust tool that allows you to non-destructively edit textures.", 
+  "AssemblyVersion":"v0.4",
   "ApplicableVersion": "any",
   "Tags": [
   ]
