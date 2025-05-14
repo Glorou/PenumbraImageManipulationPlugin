@@ -207,7 +207,7 @@ public class MainWindow : Window, IDisposable
                 selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
                 Service.DataService.WriteConfig(selectedCombination);
                 selectedCombination.Compile();
-                Service.penumbraApi.RedrawAll();
+                if(selectedCombination.Enabled){Service.penumbraApi.RedrawAll();}
             }
 
             ReloadFromFileButton();
@@ -258,19 +258,14 @@ public class MainWindow : Window, IDisposable
                             
                             foreach (var collection in Service.penumbraApi.GetCollections())
                             {
-                                if(selectedCombination.collection.ContainsKey(collection.Key))
-                                {
-                                    ImGui.PushStyleColor(ImGuiCol.Text, green);
-                                }
-                                if (ImGui.Selectable(collection.Value, false, (ImGuiSelectableFlags)17))
-                                {
-                                    selectedCombination.AddRemoveCollection((collection.Key,collection.Value));
-                                }
-                                if(selectedCombination.collection.ContainsKey(collection.Key))
-                                {
-                                    ImGui.PopStyleColor(1);
-                                }
+                                using(var color = ImRaii.PushColor(ImGuiCol.Text, (selectedCombination.collection.ContainsKey(collection.Key)? green : ImGui.GetStyle().Colors[(int) ImGuiCol.Text]))) {
 
+                                    if (ImGui.Selectable(collection.Value, false, (ImGuiSelectableFlags)17))
+                                    {
+                                        selectedCombination.AddRemoveCollection((collection.Key, collection.Value));
+                                    }
+
+                                }
                                 /*if (selectedCombination.collection.ContainsKey(collection.Key))
                                 {
                                     using (Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle.Push())
@@ -434,16 +429,16 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.TextUnformatted("New Layer from:");
 
-                if(ImGui.Button("Penumbra mod"))
+                /*if(ImGui.Button("Penumbra mod"))
                 {
                     Service.DataService.SetSelectedCombo(selectedCombination.Name);
                     Plugin.ToggleModUI();
-                }
+                }*/
                 ImGui.SameLine();
                 if(ImGui.Button("File"))
                 {
                     
-                    Service.FileDialogManager.OpenFileDialog("Select Image","Image Files {.png, .tga, .dds, .bmp, .tex}",
+                    Service.FileDialogManager.OpenFileDialog("Select Image","Image Files {.png,.tga,.dds,.bmp,.tex}",
                                                              (success, path) =>
                                                              {
                                                                  if (success)

@@ -141,8 +141,6 @@ public class DataService
             var tempCombo = new ImageCombination(comboName.ToString());
             JsonConvert.PopulateObject(json,tempCombo,settings);
             return tempCombo;
-
-        
     }
     
     
