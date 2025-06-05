@@ -18,6 +18,7 @@ using FFXIVClientStructs.Havok.Common.Serialize.Util;
 using ImGuiNET;
 using Lumina.Excel;
 using Newtonsoft.Json;
+using Penumbra.Api.IpcSubscribers;
 using TextureOverlayer.Interop;
 using TextureOverlayer.Textures;
 
@@ -104,6 +105,7 @@ public class ImageCombination
             collection.Add(Collection.Item1, Collection.Item2);
             Service.DataService.WriteConfig(this);
         }
+        //Service.DataService.AdjustPenumbraSettings(this);
     }
     
 
@@ -146,6 +148,7 @@ public class ImageCombination
         set
         {
             enabled = value;
+            //Service.DataService.AdjustPenumbraSettings(this);
             if (enabled)
             {
                 Service.penumbraApi.AddTemporaryMod(this);
@@ -174,14 +177,12 @@ public class ImageCombination
 
     public async Task Compile()
     {
-        _sandwich.Clear();
+        flushList(_sandwich);
+        comboTex.Dispose();
         LoadState = 1;
-
-
         {
             if (layers.Count == 1)
             {
-                comboTex.Dispose();
                 comboTex = new CombinedTexture(layers[0].GetTexture(), new Texture());
                 res = layers[0].GetTexture().BaseImage.Dimensions;
 
@@ -223,6 +224,14 @@ public class ImageCombination
         return;
     }
 
+    private void flushList(List<CombinedTexture> list)
+    {
+        foreach (var item in list)
+        {
+            item.Dispose();
+        }
+        list.Clear();
+    }
     
 }
 

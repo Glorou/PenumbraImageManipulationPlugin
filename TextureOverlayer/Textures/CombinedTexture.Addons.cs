@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility;
 using ImGuiNET;
 using OtterGui;
 using OtterGui.Raii;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using TextureOverlayer.Utils;
 
@@ -51,23 +52,27 @@ public partial class CombinedTexture
             _centerStorage.RgbaPixels[offset + 3] = rgba.A;
         }
     }
-    /*
+    //left is current layer, right is new layer also this doesnt work lol
     private void MultiplyPixels(int y, ParallelLoopState _)
     {
+        GraphicsOptions options = new GraphicsOptions()
+        {
+            ColorBlendingMode = PixelColorBlendingMode.Multiply
+        };
+        
         for (var x = 0; x < _leftPixels.Width; ++x)
         {
             var offset = (_leftPixels.Width * y + x) * 4;
-            var left   = DataLeft(offset);
-            var right  = DataRight(x, y);
-            var alpha  = left.W;
-            var rgba = alpha == 0
-                           ? new Rgba32()
-                           : new Rgba32(((((left * left.W) * (right * right.W) == Vector4.Zero)? (left * left.W) :(left * left.W) * (right * right.W)) / alpha) with { W = alpha });
+            var left   = new Rgba32(DataLeft(offset));
+            var right  = new Rgba32(DataRight(x, y));
+            var rgba = new Rgba32();
+            PixelBlender<Rgba32> blender = rgba.CreatePixelOperations().GetPixelBlender(options);
+            rgba = blender.Blend(left, right, 0.5f);
             _centerStorage.RgbaPixels[offset]     = rgba.R;
             _centerStorage.RgbaPixels[offset + 1] = rgba.G;
             _centerStorage.RgbaPixels[offset + 2] = rgba.B;
             _centerStorage.RgbaPixels[offset + 3] = rgba.A;
         }
-    }*/
+    }
     
 }

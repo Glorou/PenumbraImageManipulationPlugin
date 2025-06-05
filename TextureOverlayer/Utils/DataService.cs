@@ -150,7 +150,16 @@ public class DataService
             JsonConvert.PopulateObject(json,tempCombo,settings);
             return tempCombo;
     }
-    
+
+    /*public void AdjustPenumbraSettings(ImageCombination combination)
+    {
+        string json = File.ReadAllText(Service.Configuration.PluginFolder + "\\" + combination.Name + ".json");
+        dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+        jsonObj["collections"] = combination.collection;
+        jsonObj["Enabled"] = combination.Enabled;
+        string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+        File.WriteAllText(Service.Configuration.PluginFolder + "\\" + combination.Name + ".json", output);
+    }*/
     
 
     //TODO: Refactor for use here - only single mod at a time, dont bother caching for now
