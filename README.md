@@ -19,19 +19,16 @@ This project wouldn't be possible without these projects, they have my greatest 
 ## To do
 
 * Texture combining and caching
-  * Using base56 encoded filenames to store in a folder in the users Penumbra dir
-  * Adding the physical combination of textures
-* Jsonify the individual texture set configs
-  * Need to store all the pre-generated files names in a dictionary utilizing a bitmask as the key
-  * Have to store the penumbra settings that the texture uses to cross-reference on a on mod setting change listener
-* Implement a window to sit between choosing a texture and the main list of texture sets
-  * Needs to have all the setting each individual layer needs to have
-* Texture selection window cleanup
-  * Implement the VFXEditor selection method of selecting mods so I can show users what settings are associated with a texture
-* Setup the temporary mod framework
+  * Cache texture hashes rather than generating and comparing at plugin start
+* Main UI
+  * More robust layer controls
+  * Implementing double click to rename layer
+* Penumbra Texture Selector
+  * Implement the VFXEditor selection method of selecting mods so users can what settings are associated with a texture
 
 
 
-## Insanely rough mockups
 
-![ffxiv_dx11_RX8Y7fEiB4](https://github.com/user-attachments/assets/80264d50-8d90-4c03-9473-68ec4403d894)
+## UI Screenshots (WIP and subject to change)
+
+![ffxiv_dx11_RwO9vARyzV](https://github.com/user-attachments/assets/2174cbad-887b-4c96-b6a6-ab28b9bb65c6)
