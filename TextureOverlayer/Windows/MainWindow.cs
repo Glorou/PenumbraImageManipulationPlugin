@@ -221,7 +221,7 @@ public class MainWindow : Window, IDisposable
 
         if (selectedCombination != null && selectedCombination.Layers.Count >= 1)
         {
-            if (ImGui.Button("Save Selected Texture"))
+            if (ImGui.Button("Save Texture Config"))
             {
                 selectedCombination.FileName = Service.DataService.WriteTexFile(selectedCombination);
                 Service.DataService.WriteConfig(selectedCombination);
@@ -353,7 +353,6 @@ public class MainWindow : Window, IDisposable
                     {
                         foreach (var image in selectedCombination.Layers.AsEnumerable().Reverse())
                         {
-                            var hovered = false;
                             //TODO: Make selectable in to text box on double click
                             if (ImGui.Selectable($"{image._friendlyName}", (selectedIndex == selectedCombination.Layers.IndexOf(image)), ImGuiSelectableFlags.AllowItemOverlap))
                             {
@@ -445,7 +444,7 @@ public class MainWindow : Window, IDisposable
                             {
                                 selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.MultiplyChannels;
                                 selectedCombination.Compile();
-                            }*/
+                            } */
                         }
                     }
 

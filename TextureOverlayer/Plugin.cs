@@ -29,7 +29,7 @@ public class Plugin : IDalamudPlugin
 
 
     public readonly WindowSystem WindowSystem = new("TextureOverlayer");
-    private ConfigWindow ConfigWindow { get; init; }
+    //private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
     private ItemPicker ItemPicker { get; init; }
@@ -46,10 +46,10 @@ public class Plugin : IDalamudPlugin
         Service.penumbraApi.Modlist = new GetModList(pluginInterface).Invoke();
         Service.DataService = new DataService();
         
-        ConfigWindow = new ConfigWindow(this);
+        //ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
         ItemPicker = new ItemPicker(this);
-        WindowSystem.AddWindow(ConfigWindow);
+        //WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ItemPicker);
 
@@ -69,7 +69,7 @@ public class Plugin : IDalamudPlugin
 
         // This adds a button to the plugin installer entry of this plugin which allows
         // to toggle the display status of the configuration ui
-        pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+        //pluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
 
         // Adds another button that is doing the same but for the main ui of the plugin
         pluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
@@ -96,7 +96,7 @@ public class Plugin : IDalamudPlugin
     {
         WindowSystem.RemoveAllWindows();
 
-        ConfigWindow.Dispose();
+        //ConfigWindow.Dispose();
         MainWindow.Dispose();
 
         Service.CommandManager.RemoveHandler(CommandName);
@@ -110,7 +110,7 @@ public class Plugin : IDalamudPlugin
 
     private void DrawUI() => WindowSystem.Draw();
 
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
+    //public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
     public void ToggleModUI() => ItemPicker.Toggle();
 }
