@@ -18,6 +18,7 @@ public partial class CombinedTexture
         CopyChannels     = 3,
         SubtractChannels = 4,
         MultiplyChannels = 5,
+        SoftLight        = 6,
     }
 
     private enum ResizeOp
@@ -73,6 +74,7 @@ public partial class CombinedTexture
             CombineOp.CopyChannels  => resizeOp,
             CombineOp.SubtractChannels  => resizeOp,
             CombineOp.MultiplyChannels  => resizeOp,
+            CombineOp.SoftLight  => resizeOp,
             _                       => throw new ArgumentException($"Invalid combine operation {combineOp}"),
         };
 

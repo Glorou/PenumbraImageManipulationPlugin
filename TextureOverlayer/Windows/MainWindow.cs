@@ -440,6 +440,11 @@ public class MainWindow : Window, IDisposable
                                 selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SubtractChannels;
                                 selectedCombination.Compile();
                             }
+                            if (ImGui.Selectable(TextureHandler.ResizeOpLabels[6]))
+                            {
+                                selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.SoftLight;
+                                selectedCombination.Compile();
+                            }
                             /*if (ImGui.Selectable(TextureHandler.ResizeOpLabels[5]))
                             {
                                 selectedCombination.Layers[selectedIndex]._combineOp = CombineOp.MultiplyChannels;
@@ -454,6 +459,9 @@ public class MainWindow : Window, IDisposable
                     }
                 }
 
+                
+                //TODO: Add a library based on cached textures 
+                //TODO: Fix penumbra interface
                 ImGui.TextUnformatted("New Layer from:");
 
                 /*if(ImGui.Button("Penumbra mod"))

@@ -74,5 +74,35 @@ public partial class CombinedTexture
             _centerStorage.RgbaPixels[offset + 3] = rgba.A;
         }
     }
+    private void SoftLight(int y, ParallelLoopState _)
+    {
+        for (var x = 0; x < _leftPixels.Width; ++x)
+        {
+            var offset = (_leftPixels.Width * y + x) * 4;
+            var left   = DataLeft(offset);
+            var right  = DataRight(x, y);
+            var alpha  = left.W;
+            var product = new Vector4();
+            product.W = right.W;
+            product.X = (float)(right.X < .5
+                                    ? (2 * left.X *right.X) + (left.X * left.X * (1 - (2 * right.X))) : (2 * left.X *
+                                                    (1 - right.X)) + (Math.Sqrt(left.X) * ((2 * right.X) - 1)));
+            product.Y = (float)(right.Y < .5
+                                    ? (2 * left.Y *right.Y ) + (left.Y * left.Y * (1 - (2 * right.Y))) : (2 * left.Y *
+                                                    (1 - right.Y)) + (Math.Sqrt(left.Y) * ((2 * right.Y) - 1)));
+            product.Z = (float)(right.Z < .5
+                                    ? (2 * left.Z * right.Z) + (left.Z * left.Z * (1 - (2 * right.Z))) : (2 * left.Z *
+                                                    (1 - right.Z)) + (Math.Sqrt(left.Z) * ((2 * right.Z) - 1)));
+            
+            var rgba = alpha == 0
+                           ? new Rgba32()
+                           : new Rgba32(((product * product.W + left * left.W * (1 - product.W)) / alpha) with { W = alpha });
+            _centerStorage.RgbaPixels[offset]     = rgba.R;
+            _centerStorage.RgbaPixels[offset + 1] = rgba.G;
+            _centerStorage.RgbaPixels[offset + 2] = rgba.B;
+            _centerStorage.RgbaPixels[offset + 3] = rgba.A;
+        }
+    }
+    
     
 }

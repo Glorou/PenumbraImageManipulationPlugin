@@ -36,6 +36,7 @@ public enum CombineOp
     CopyChannels     = 3,
     SubtractChannels = 4,
     MultiplyChannels = 5,
+    SoftLight        = 6,
 }
 
 
@@ -314,7 +315,8 @@ public static class TextureHandler
         "Right Multiply",
         "Copy Channels",
         "Subtract",
-        "Multiply"
+        "Multiply",
+        "Soft Light"
     };
     public static IList<T> Swap<T>(IList<T> list, int indexA, int indexB)
     {

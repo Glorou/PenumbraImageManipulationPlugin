@@ -189,6 +189,7 @@ public partial class CombinedTexture
                     CombineOp.CopyChannels  => ChannelMergePixelsMultiplied,
                     CombineOp.SubtractChannels => SubtractPixels,
                     CombineOp.MultiplyChannels  => MultiplyPixels,
+                    CombineOp.SoftLight => SoftLight,
                     _                       => throw new InvalidOperationException($"Cannot combine images with operation {combineOp}"),
                 });
             }
