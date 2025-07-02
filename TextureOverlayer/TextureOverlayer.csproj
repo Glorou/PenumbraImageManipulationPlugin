@@ -6,7 +6,7 @@
     <PackageProjectUrl>https://github.com/Glorou/PenumbraImageManipulationPlugin</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
-    <AssemblyVersion>0.4.3</AssemblyVersion>
+    <AssemblyVersion>0.4.5</AssemblyVersion>
   </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

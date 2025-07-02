@@ -1,10 +1,10 @@
 
 
-# Penumbra Image Manipulation Plugin
+# Texture Overlayer
 
 
 
-Penumbra Image Manipulation Plugin or pimp for short, is designed to replace the need for baking texture mods in either Penumbra or GIMP/Photoshop
+Texture Overlayer (formerly Penumbra Image Manipulation Plugin or pimp for short), is designed to replace the need for baking texture mods in either Penumbra or GIMP/Photoshop
 
 You'll use a Penumbra Texture Editor-esque UI to define texture layers which get combined to make your final product.
 Layers are enabled and disabled based upon the current mod status and setting.

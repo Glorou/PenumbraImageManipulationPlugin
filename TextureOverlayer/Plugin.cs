@@ -24,7 +24,7 @@ public class Plugin : IDalamudPlugin
 {
 
     
-    private const string CommandName = "/pimp";
+    private const string CommandName = "/to";
     
 
 
@@ -62,7 +62,7 @@ public class Plugin : IDalamudPlugin
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "A useful message to display in /xlhelp"
+            HelpMessage = "Opens the main Texture Overlayer interface"
         });
 
         pluginInterface.UiBuilder.Draw += DrawUI;
